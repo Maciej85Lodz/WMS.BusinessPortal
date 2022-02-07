@@ -1,0 +1,107 @@
+﻿@model IEnumerable<WMS.Models.Invent.TransferOrder>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminlteNetcoreIndex.cshtml";
+    ViewData["EntityIcon"] = "fa fa-recycle";
+    ViewData["ListTitle"] = "Transfer Order List";
+    ViewData["IndexInfo"] = "Transfer Order (TO) is a process of transfering products from one Warehouse to another Warehouse.";
+}
+
+
+<table class="table table-hover table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransferOrderNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransferOrderStatus)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.PicName)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.BranchIdFrom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WarehouseIdFrom)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.BranchIdTo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WarehouseIdTo)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="tools">
+                        <a asp-action="Edit" asp-route-id="@item.TransferOrderId" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>
+                        <a asp-action="Details" asp-route-id="@item.TransferOrderId" class="btn btn-primary btn-xs"><i class="fa fa-list"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.TransferOrderId" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
+                    </div>
+                   
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransferOrderNumber)
+                </td>
+                <td>
+                    @if (item.TransferOrderStatus == WMS.Models.Invent.TransferOrderStatus.Completed)
+                    {
+                        <span class="label label-success">
+                            @Html.DisplayFor(modelItem => item.TransferOrderStatus)
+                        </span>
+
+                    }
+                    @if (item.TransferOrderStatus == WMS.Models.Invent.TransferOrderStatus.Open)
+                    {
+                        <span class="label label-primary">
+                            @Html.DisplayFor(modelItem => item.TransferOrderStatus)
+                        </span>
+
+                    }
+                    @if (item.TransferOrderStatus == WMS.Models.Invent.TransferOrderStatus.Draft)
+                    {
+                        <span class="label label-warning">
+                            @Html.DisplayFor(modelItem => item.TransferOrderStatus)
+                        </span>
+
+                    }
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.PicName)
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.BranchIdFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsIssued)
+                    @Html.DisplayFor(modelItem => item.WarehouseFrom.warehouseName)
+
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.BranchIdTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsReceived)
+                    @Html.DisplayFor(modelItem => item.WarehouseTo.warehouseName)
+
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

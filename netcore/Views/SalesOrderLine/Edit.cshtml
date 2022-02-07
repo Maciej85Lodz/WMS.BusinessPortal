@@ -1,0 +1,58 @@
+﻿@model WMS.Models.Invent.SalesOrderLine
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminlteNetcoreEdit.cshtml";
+    }
+
+
+<div class="row">
+    <div class="col-md-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="SalesOrderLineId" />
+                    <div class="form-group hidden">
+                        <label asp-for="SalesOrderId" class="control-label"></label>
+                        <select asp-for="SalesOrderId" class="form-control select2" asp-items="ViewBag.salesOrderId"></select>
+                        <span asp-validation-for="SalesOrderId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ItemTypeId" class="control-label"></label>
+                        <select asp-for="ItemTypeId" class="form-control select2" asp-items="ViewBag.productId"></select>
+                        <span asp-validation-for="ItemTypeId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Qty" class="control-label"></label>
+                        <input asp-for="Qty" class="form-control" />
+                        <span asp-validation-for="Qty" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DiscountAmount" class="control-label"></label>
+                        <input asp-for="DiscountAmount" class="form-control" />
+                        <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TotalAmount" class="control-label"></label>
+                        <input asp-for="TotalAmount" class="form-control" />
+                        <span asp-validation-for="TotalAmount" class="text-danger"></span>
+                    </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+            @section Scripts {
+                 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+            }
+
+
+

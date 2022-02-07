@@ -1,0 +1,57 @@
+﻿@model WMS.Models.Invent.PurchaseOrderLine
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_AdminlteNetcoreDelete.cshtml";
+}
+
+
+
+<div>
+    
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ItemPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DiscountAmount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DiscountAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalAmount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TotalAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.createdAt)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.createdAt)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ItemType.ItemTypeId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseOrder)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseOrder.PurchaseOrderId)
+        </dd>
+    </dl>
+    
+</div>

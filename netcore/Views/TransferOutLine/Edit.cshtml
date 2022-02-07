@@ -1,0 +1,48 @@
+﻿@model WMS.Models.Invent.TransferOutLine
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminlteNetcoreEdit.cshtml";
+    }
+
+
+<div class="row">
+    <div class="col-md-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="TransferOutLineId" />
+                    <div class="form-group hidden">
+                        <label asp-for="TransferOutId" class="control-label"></label>
+                        <select asp-for="TransferOutId" class="form-control select2" asp-items="ViewBag.transferOutId"></select>
+                        <span asp-validation-for="TransferOutId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ItemTypeId" class="control-label"></label>
+                        <select asp-for="ItemTypeId" class="form-control select2" asp-items="ViewBag.productId"></select>
+                        <span asp-validation-for="ItemTypeId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Qty" class="control-label"></label>
+                        <input asp-for="Qty" class="form-control" />
+                        <span asp-validation-for="Qty" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="QtyInventory" class="control-label"></label>
+                        <input asp-for="QtyInventory" class="form-control" />
+                        <span asp-validation-for="QtyInventory" class="text-danger"></span>
+                    </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+            @section Scripts {
+                 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+            }
+
+
+

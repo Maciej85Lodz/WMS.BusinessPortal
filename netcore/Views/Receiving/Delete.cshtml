@@ -1,0 +1,96 @@
+﻿@model WMS.Models.Invent.Receiving
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_AdminlteNetcoreDelete.cshtml";
+    ViewData["EntityIcon"] = "fa fa-truck";
+    ViewData["DeleteInfo"] = "Delete Purchase Receive (Receiving) will roll back related PO status to [Open]";
+}
+
+
+@Html.Partial("_StatusMessage", (string)ViewBag.StatusMessage)
+<div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ReceivingId" />
+            <div class="form-group hidden">
+                <label asp-for="BranchId" class="control-label"></label>
+                <select asp-for="BranchId" class="form-control select2" asp-items="ViewBag.branchId"></select>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <small class="text-yellow"><i>Summary</i></small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="ReceivingNumber" class="control-label"></label>
+                        <input disabled asp-for="ReceivingNumber" class="form-control" />
+                        <span asp-validation-for="ReceivingNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="PurchaseOrderId" class="control-label">Purchase Order #</label>
+                        <select disabled asp-for="PurchaseOrderId" class="form-control select2" asp-items="ViewBag.purchaseOrderId"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="ReceivingDate" class="control-label"></label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input disabled asp-for="ReceivingDate" value="@Model.ReceivingDate.ToString("MM/dd/yyyy")" class="form-control pull-right datepicker" type="text" />
+                        </div>
+                        <span asp-validation-for="ReceivingDate" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group hidden">
+                        <label asp-for="VendorId" class="control-label"></label>
+                        <select disabled asp-for="VendorId" class="form-control select2" asp-items="ViewBag.vendorId"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <small class="text-yellow"><i>Property</i></small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="WarehouseId" class="control-label">Warehouse</label>
+                        <select disabled asp-for="WarehouseId" class="form-control select2" asp-items="ViewBag.warehouseId"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group has-success">
+                        <label asp-for="VendorDONumber" class="control-label">Ref. Vendor DO #</label>
+                        <input disabled asp-for="VendorDONumber" class="form-control" />
+                        <span asp-validation-for="VendorDONumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label asp-for="VendorInvoice" class="control-label">Ref. Vendor Invoice #</label>
+                        <input disabled asp-for="VendorInvoice" class="form-control" />
+                        <span asp-validation-for="VendorInvoice" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

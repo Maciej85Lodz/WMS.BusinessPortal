@@ -1,0 +1,93 @@
+﻿@model WMS.Models.Invent.ItemType
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminlteNetcoreEdit.cshtml";
+    ViewData["EntityIcon"] = "fa fa-tags";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="ItemTypeId" />
+        <div class="row">
+            <div class="col-md-12">
+                <small class="text-yellow"><i>Summary</i></small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group has-success">
+                    <label asp-for="ItemCode" class="control-label"></label>
+                    <input asp-for="ItemCode" class="form-control" />
+                    <span asp-validation-for="ItemCode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group has-success">
+                    <label asp-for="ItemTypeName" class="control-label"></label>
+                    <input asp-for="ItemTypeName" class="form-control" />
+                    <span asp-validation-for="ItemTypeName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <small class="text-yellow"><i>Property</i></small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Barcode" class="control-label"></label>
+                    <input asp-for="Barcode" class="form-control" />
+                    <span asp-validation-for="Barcode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="ManufacturersNumber" class="control-label"></label>
+                    <input asp-for="ManufacturersNumber" class="form-control" />
+                    <span asp-validation-for="ManufacturersNumber" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="ItemTypeType" class="control-label"></label>
+                    <select asp-for="ItemTypeType" class="form-control select2" asp-items="Html.GetEnumSelectList<WMS.Models.Invent.ItemTypeType>()"></select>
+                    <span asp-validation-for="ItemTypeType" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="UOM" class="control-label"></label>
+                    <select asp-for="UOM" class="form-control select2" asp-items="Html.GetEnumSelectList<WMS.Models.Invent.UOM>()"></select>
+                    <span asp-validation-for="UOM" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+            @section Scripts {
+                 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+            }
+
+
+

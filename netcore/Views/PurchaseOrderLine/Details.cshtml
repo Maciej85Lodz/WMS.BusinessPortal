@@ -1,0 +1,78 @@
+﻿@model WMS.Models.Invent.PurchaseOrderLine
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_AdminlteNetcoreDetails.cshtml";
+}
+
+
+
+<div class="row">
+    <div class="col-md-9">
+        <!-- Default box -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <div>
+                      <dl class="dl-horizontal">
+                          <dt>
+                              @Html.DisplayNameFor(model => model.Quantity)
+                          </dt>
+                          <dd>
+                              @Html.DisplayFor(model => model.Quantity)
+                          </dd>
+                          <dt>
+                              @Html.DisplayNameFor(model => model.ItemPrice)
+                          </dt>
+                          <dd>
+                              @Html.DisplayFor(model => model.ItemPrice)
+                          </dd>
+                          <dt>
+                              @Html.DisplayNameFor(model => model.DiscountAmount)
+                          </dt>
+                          <dd>
+                              @Html.DisplayFor(model => model.DiscountAmount)
+                          </dd>
+                          <dt>
+                              @Html.DisplayNameFor(model => model.TotalAmount)
+                          </dt>
+                          <dd>
+                              @Html.DisplayFor(model => model.TotalAmount)
+                          </dd>
+                          <dt>
+                              @Html.DisplayNameFor(model => model.createdAt)
+                          </dt>
+                          <dd>
+                              @Html.DisplayFor(model => model.createdAt)
+                          </dd>
+                          <dt>
+                              @Html.DisplayNameFor(model => model.ItemType)
+                          </dt>
+                          <dd>
+                              @Html.DisplayFor(model => model.ItemType.ItemTypeId)
+                          </dd>
+                          <dt>
+                              @Html.DisplayNameFor(model => model.PurchaseOrder)
+                          </dt>
+                          <dd>
+                              @Html.DisplayFor(model => model.PurchaseOrder.PurchaseOrderId)
+                          </dd>
+                      </dl>                                   
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <div class="form-group">
+                    <a asp-action="Edit" asp-route-id="@Model.purchaseOrderLineId" class="btn btn-primary">Edit</a>
+                    <a asp-action="Index" class="btn btn-default">Back to List</a>
+                </div>
+            </div>
+            <!-- /.box-footer-->
+        </div>
+        <!-- /.box -->
+    </div>
+    <div class="col-md-3">
+    </div>
+</div>
+
+
+

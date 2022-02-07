@@ -1,0 +1,96 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using WMS.Models.Invent
+@inject WMS.Data.ApplicationDbContext Context
+@inject WMS.Services.INetcoreService netcoreSvc
+
+@{
+    string currentController = (string)ViewContext.RouteData.Values["Controller"];
+    string branchId = (string)ViewContext.RouteData.Values["id"];
+    string whId = (string)ViewContext.RouteData.Values["id"];
+    string productId = (string)ViewContext.RouteData.Values["id"];
+    string vendorId = (string)ViewContext.RouteData.Values["id"];
+    string customerId = (string)ViewContext.RouteData.Values["id"];
+    string purchaseId = (string)ViewContext.RouteData.Values["id"];
+    string salesId = (string)ViewContext.RouteData.Values["id"];
+    string transferId = (string)ViewContext.RouteData.Values["id"];
+
+
+    List<TimelineViewModel> times = new List<TimelineViewModel>();
+
+    //Warehouse
+    if (currentController == "Warehouse")
+    {
+        Warehouse wh = new Warehouse();
+        wh = Context.Warehouse.Where(x => x.warehouseId.Equals(whId)).FirstOrDefault();
+        branchId = wh != null ? wh.branchId : "";
+
+        times = netcoreSvc.GetTimelinesByBranchId(branchId);
+    }
+
+    //Branch
+    if (currentController == "Branch")
+    {
+        times = netcoreSvc.GetTimelinesByBranchId(branchId);
+    }
+
+    //ItemType
+    if (currentController == "ItemType")
+    {
+        times = netcoreSvc.GetTimelinesByItemTypeId(productId);
+    }
+
+    //Vendor
+    if (currentController == "Vendor")
+    {
+        times = netcoreSvc.GetTimelinesByVendorId(vendorId);
+    }
+
+    //Customer
+    if (currentController == "Customer")
+    {
+        times = netcoreSvc.GetTimelinesByCustomerId(customerId);
+    }
+
+    //purchase
+    if (currentController == "PurchaseOrder")
+    {
+        times = netcoreSvc.GetTimelinesByPurchaseId(purchaseId);
+    }
+
+    //sales
+    if (currentController == "SalesOrder")
+    {
+        times = netcoreSvc.GetTimelinesBySalesId(salesId);
+    }
+
+    //transfer
+    if (currentController == "TransferOrder")
+    {
+        times = netcoreSvc.GetTimelinesByTransferId(transferId);
+    }
+}
+
+<!-- The time line -->
+<ul class="timeline">
+    <!-- timeline time label -->
+    <li class="time-label">
+        <span class="bg-green">
+            Activities
+        </span>
+    </li>
+    <!-- /.timeline-label -->
+    <!-- timeline item -->
+    @foreach (var item in times)
+    {
+        <li>
+            <i class="fa @item.Icon bg-blue"></i>
+            <div class="timeline-item">
+                <h3 class="timeline-header"><a href="#">@item.Header</a></h3>
+                <div class="timeline-body">
+                    @item.Body
+                </div>
+            </div>
+        </li>
+    }
+
+</ul>

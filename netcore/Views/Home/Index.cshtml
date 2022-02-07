@@ -1,0 +1,489 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using WMS.Models.Invent
+@inject WMS.Data.ApplicationDbContext Context
+@{
+    ViewData["Title"] = "Home Index";
+    Layout = "_AdminlteNetcore";
+
+    int po = Context.PurchaseOrder.Count();
+    int so = Context.SalesOrder.Count();
+    int shipment = Context.Shipment.Count();
+    int receive = Context.Receiving.Count();
+
+    List<VMStock> stocks = new List<VMStock>();
+    List<ItemType> products = new List<ItemType>();
+    products = Context.ItemTypes.ToList();
+    foreach (var item in products)
+    {
+        VMStock stock = new VMStock();
+        stock.ItemType = item.ItemCode;
+        stock.QtyPO = Context.PurchaseOrderLine.Where(x => x.ItemTypeId.Equals(item.ItemTypeId)).Sum(x => x.Quantity);
+        stock.QtyReceiving = Context.ReceivingLine.Where(x => x.ItemTypeId.Equals(item.ItemTypeId)).Sum(x => x.QtyReceive);
+        stock.QtySO = Context.SalesOrderLine.Where(x => x.ItemTypeId.Equals(item.ItemTypeId)).Sum(x => x.Qty);
+        stock.QtyShipment = Context.ShipmentLine.Where(x => x.ItemTypeId.Equals(item.ItemTypeId)).Sum(x => x.QtyShipment);
+        stock.QtyOnhand = stock.QtyReceiving - stock.QtyShipment;
+
+        stocks.Add(stock);
+    }
+
+    List<PurchaseOrderLine> poLines = new List<PurchaseOrderLine>();
+    poLines = Context.PurchaseOrderLine.Include(x => x.PurchaseOrder).OrderByDescending(x => x.PurchaseOrder.PurchaseOrderDate).Take(10).ToList();
+
+    List<SalesOrderLine> soLines = new List<SalesOrderLine>();
+    soLines = Context.SalesOrderLine.Include(x => x.SalesOrder).OrderByDescending(x => x.SalesOrder.SalesOrderDate).Take(10).ToList();
+}
+
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+    <!-- Main content -->
+    <section class="content">
+
+        <div class="row">
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-aqua">
+                    <div class="inner">
+                        <h3>@po</h3>
+                        <p>Purchase Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-file-text"></i>
+                    </div>
+                    <a href="@Url.Action("Index", "PurchaseOrder")" class="small-box-footer">
+                        More info <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                    <div class="inner">
+                        <h3>@so<sup style="font-size: 20px"></sup></h3>
+                        <p>Sales Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-cart-plus"></i>
+                    </div>
+                    <a href="@Url.Action("Index", "SalesOrder")" class="small-box-footer">
+                        More info <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-yellow">
+                    <div class="inner">
+                        <h3>@receive</h3>
+                        <p>Receiving</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-truck"></i>
+                    </div>
+                    <a href="@Url.Action("Index", "Receiving")" class="small-box-footer">
+                        More info <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                    <div class="inner">
+                        <h3>@shipment</h3>
+                        <p>Shipment</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-plane"></i>
+                    </div>
+                    <a href="@Url.Action("Index", "Shipment")" class="small-box-footer">
+                        More info <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box box-danger">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">ItemType Type</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <canvas id="pieChart" style="height:250px"></canvas>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Sales vs Purchase (Last 6 Months)</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="chart">
+                            <canvas id="barChart" style="height:230px"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="box box-warning">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Stocks Realtime</h3>
+                        <div class="box-tools pull-right">
+                            <div class="has-feedback">
+                                <input type="text" id="mainSearch" class="form-control input-sm" placeholder="Search...">
+                                <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                            </div>
+                        </div>
+                        <!-- /.box-tools -->
+                    </div>
+                    <div class="box-body no-padding">
+                        <div class="table-responsive mailbox-messages">
+                            <table class="table table-hover table-striped" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fa fa-tags"></i> ItemType</th>
+                                        <th><i class="fa fa-file-text"></i> Qty Purchase</th>
+                                        <th><i class="fa fa-truck"></i> Qty Receiving</th>
+                                        <th><i class="fa fa-cart-plus"></i> Qty Sales</th>
+                                        <th><i class="fa fa-plane"></i> Qty Shipment</th>
+                                        <th class="text-aqua"><i class="fa fa-check-circle"></i> Qty On Hand</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in stocks)
+                                    {
+                                        <tr>
+
+                                            <td>@item.ItemType</td>
+                                            <td>@item.QtyPO</td>
+                                            <td>@item.QtyReceiving</td>
+                                            <td>@item.QtySO</td>
+                                            <td>@item.QtyShipment</td>
+                                            <td>@item.QtyOnhand</td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <!-- TABLE: LATEST PURCHASE ORDERS -->
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Latest Purchase Orders</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table no-margin">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Item</th>
+                                        <th>Qty</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in poLines)
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Action("Details", "PurchaseOrder", new { id = item.PurchaseOrder.PurchaseOrderId })">@item.PurchaseOrder.PurchaseOrderNumber</a></td>
+                                            <td>@item.ItemType.ItemTypeName</td>
+                                            <td>@item.Quantity</td>
+                                            <td>
+                                                @if (item.PurchaseOrder.PurchaseOrderStatus == WMS.Models.Invent.PurchaseOrderStatus.Completed)
+                                                {
+                                                    <span class="label label-success">
+                                                        @item.PurchaseOrder.PurchaseOrderStatus
+                                                    </span>
+
+                                                }
+                                                @if (item.PurchaseOrder.PurchaseOrderStatus == WMS.Models.Invent.PurchaseOrderStatus.Open)
+                                                {
+                                                    <span class="label label-primary">
+                                                        @item.PurchaseOrder.PurchaseOrderStatus
+                                                    </span>
+
+                                                }
+                                                @if (item.PurchaseOrder.PurchaseOrderStatus == WMS.Models.Invent.PurchaseOrderStatus.Draft)
+                                                {
+                                                    <span class="label label-warning">
+                                                        @item.PurchaseOrder.PurchaseOrderStatus
+                                                    </span>
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <a href="@Url.Action("Create", "PurchaseOrder")" class="btn btn-sm btn-info btn-flat pull-left">Create New Purchase Order</a>
+                        <a href="@Url.Action("Index", "PurchaseOrder")" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a>
+                    </div>
+                    <!-- /.box-footer -->
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <!-- TABLE: LATEST SALES ORDERS -->
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Latest Sales Orders</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table no-margin">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Item</th>
+                                        <th>Qty</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in soLines)
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Action("Details", "SalesOrder", new { id = item.SalesOrder.SalesOrderId })">@item.SalesOrder.SalesOrderNumber</a></td>
+                                            <td>@item.ItemType.ItemTypeName</td>
+                                            <td>@item.Qty</td>
+                                            <td>
+                                                @if (item.SalesOrder.SalesOrderStatus == WMS.Models.Invent.SalesOrderStatus.Completed)
+                                                {
+                                                    <span class="label label-success">
+                                                        @item.SalesOrder.SalesOrderStatus
+                                                    </span>
+
+                                                }
+                                                @if (item.SalesOrder.SalesOrderStatus == WMS.Models.Invent.SalesOrderStatus.Open)
+                                                {
+                                                    <span class="label label-primary">
+                                                        @item.SalesOrder.SalesOrderStatus
+                                                    </span>
+
+                                                }
+                                                @if (item.SalesOrder.SalesOrderStatus == WMS.Models.Invent.SalesOrderStatus.Draft)
+                                                {
+                                                    <span class="label label-warning">
+                                                        @item.SalesOrder.SalesOrderStatus
+                                                    </span>
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <a href="@Url.Action("Create", "SalesOrder")" class="btn btn-sm btn-success btn-flat pull-left">Create New Sales Order</a>
+                        <a href="@Url.Action("Index", "SalesOrder")" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a>
+                    </div>
+                    <!-- /.box-footer -->
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+
+@section Styles{
+
+}
+
+
+@section Scripts{
+    <!-- ChartJS -->
+    <script src="~/adminlte/components/chart.js/Chart.js"></script>
+    <script>
+        $(document).ready(function () {
+            var mainTable;
+
+            mainTable = $('.table').DataTable({
+                "lengthChange": false,
+                "info": false,
+                "searching": true,
+                "dom": 'lrtip',
+                "scrollX": false
+            });
+
+            $('#mainSearch').keyup(function () {
+                mainTable.search($(this).val()).draw();
+            });
+
+
+            //-------------
+            //- PIE CHART -
+            //-------------
+            // Get context with jQuery - using jQuery's .get() method.
+            var pieChartCanvas = $('#pieChart').get(0).getContext('2d');
+            var pieChart = new Chart(pieChartCanvas);
+            var pieOptions = {
+                //Boolean - Whether we should show a stroke on each segment
+                segmentShowStroke: true,
+                //String - The colour of each segment stroke
+                segmentStrokeColor: '#fff',
+                //Number - The width of each segment stroke
+                segmentStrokeWidth: 2,
+                //Number - The percentage of the chart that we cut out of the middle
+                percentageInnerCutout: 50, // This is 0 for Pie charts
+                //Number - Amount of animation steps
+                animationSteps: 100,
+                //String - Animation easing effect
+                animationEasing: 'easeOutBounce',
+                //Boolean - Whether we animate the rotation of the Doughnut
+                animateRotate: true,
+                //Boolean - Whether we animate scaling the Doughnut from the centre
+                animateScale: false,
+                //Boolean - whether to make the chart responsive to window resizing
+                responsive: true,
+                // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+                maintainAspectRatio: true,
+                //String - A legend template
+                legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'
+            };
+
+
+            $.ajax({
+                url: '/api/dashboard/getpiedata',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+
+                    //Create pie or douhnut chart
+                    pieChart.Doughnut(data, pieOptions)
+
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+
+            });
+
+
+            //-------------
+            //- BAR CHART -
+            //-------------
+
+            var barChartCanvas = $('#barChart').get(0).getContext('2d')
+            var barChart = new Chart(barChartCanvas)
+
+            var barChartOptions = {
+                //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+                scaleBeginAtZero: true,
+                //Boolean - Whether grid lines are shown across the chart
+                scaleShowGridLines: true,
+                //String - Colour of the grid lines
+                scaleGridLineColor: 'rgba(0,0,0,.05)',
+                //Number - Width of the grid lines
+                scaleGridLineWidth: 1,
+                //Boolean - Whether to show horizontal lines (except X axis)
+                scaleShowHorizontalLines: true,
+                //Boolean - Whether to show vertical lines (except Y axis)
+                scaleShowVerticalLines: true,
+                //Boolean - If there is a stroke on each bar
+                barShowStroke: true,
+                //Number - Pixel width of the bar stroke
+                barStrokeWidth: 2,
+                //Number - Spacing between each of the X value sets
+                barValueSpacing: 5,
+                //Number - Spacing between data sets within X values
+                barDatasetSpacing: 1,
+                //String - A legend template
+                legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+                //Boolean - whether to make the chart responsive
+                responsive: true,
+                maintainAspectRatio: true
+            }
+
+            barChartOptions.datasetFill = false;
+
+
+            $.ajax({
+                url: '/api/dashboard/getbardata',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+
+                    //Create bar chart
+                    var barChartData = data;
+                    barChartData.datasets[1].fillColor = '#00a65a'
+                    barChartData.datasets[1].strokeColor = '#00a65a'
+                    barChartData.datasets[1].pointColor = '#00a65a'
+                    barChart.Bar(barChartData, barChartOptions);
+
+
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+
+            });
+
+
+
+        });
+
+
+
+
+    </script>
+}
+
+

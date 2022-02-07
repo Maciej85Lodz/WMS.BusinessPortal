@@ -1,0 +1,63 @@
+﻿@model WMS.Models.Invent.ReceivingLine
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_AdminlteNetcoreDelete.cshtml";
+}
+
+
+
+<div>
+    
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.QtyOrder)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.QtyOrder)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.QtyReceive)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.QtyReceive)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.QtyInventory)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.QtyInventory)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.createdAt)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.createdAt)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Branch)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Branch.branchId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ItemType.ItemTypeId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Receiving)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Receiving.ReceivingId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Warehouse)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Warehouse.warehouseId)
+        </dd>
+    </dl>
+    
+</div>

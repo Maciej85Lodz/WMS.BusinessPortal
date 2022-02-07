@@ -1,0 +1,136 @@
+﻿@model WMS.Models.Invent.Shipment
+
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_AdminlteNetcoreCreate.cshtml";
+    ViewData["EntityIcon"] = "fa fa-plane";
+    ViewData["CreateInfo"] = "Shipment is a process of delivering the order to your Customer. Only [Open] sales order will be available to select for shipment.";
+}
+
+@Html.Partial("_StatusMessage", (string)ViewBag.StatusMessage)
+<div class="row">
+    <div class="col-md-12">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="ShipmentId" />
+        <div class="form-group hidden">
+            <label asp-for="BranchId" class="control-label"></label>
+            <select asp-for="BranchId" class="form-control select2" asp-items="ViewBag.branchId"></select>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <small class="text-yellow"><i>Summary</i></small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="ShipmentNumber" class="control-label"></label>
+                    <input asp-for="ShipmentNumber" class="form-control" disabled />
+                    <span asp-validation-for="ShipmentNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="SalesOrderId" class="control-label">Sales Order</label>
+                    <select asp-for="SalesOrderId" class="form-control select2" asp-items="ViewBag.salesOrderId"></select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="ShipmentDate" class="control-label"></label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <input asp-for="ShipmentDate" value="@Model.ShipmentDate.ToString("MM/dd/yyyy")" class="form-control pull-right datepicker" type="text" />
+                    </div>
+                    <span asp-validation-for="ShipmentDate" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group hidden">
+                    <label asp-for="CustomerId" class="control-label"></label>
+                    <select asp-for="CustomerId" class="form-control select2" asp-items="ViewBag.customerId"></select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <small class="text-yellow"><i>Property</i></small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="WarehouseId" class="control-label">Warehouse</label>
+                    <select asp-for="WarehouseId" class="form-control select2" asp-items="ViewBag.warehouseId"></select>
+                    <span asp-validation-for="WarehouseId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label asp-for="CustomerPurchaseOrder" class="control-label">Ref. Customer PO#</label>
+                    <input asp-for="CustomerPurchaseOrder" class="form-control" />
+                    <span asp-validation-for="CustomerPurchaseOrder" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label asp-for="InvoiceNumber" class="control-label">Invoice for Customer</label>
+                    <input asp-for="InvoiceNumber" class="form-control" />
+                    <span asp-validation-for="InvoiceNumber" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="ExpeditionType" class="control-label"></label>
+                    <select asp-for="ExpeditionType" class="form-control select2" asp-items="Html.GetEnumSelectList<WMS.Models.Invent.ExpeditionType>()"></select>
+                    <span asp-validation-for="ExpeditionType" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="ExpeditionMode" class="control-label"></label>
+                    <select asp-for="ExpeditionMode" class="form-control select2" asp-items="Html.GetEnumSelectList<WMS.Models.Invent.ExpeditionMode>()"></select>
+                    <span asp-validation-for="ExpeditionMode" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function() {
+            var items = "<option value='0'>Select</option>";
+            $('#warehouseId').html(items);
+
+            $('#salesOrderId').change(function () { 
+                var url = '@Url.Content("~/")' + "Shipment/GetWarehouseByOrder";
+                var ddlsource = '#SalesOrderId';
+                $.getJSON(url, { salesOrderId: $(ddlsource).val() }, function (data) { 
+                    var items = '';
+                    $('#warehouseId').empty();
+                    $.each(data, function (i, warehouse) { 
+                        items += "<option value='" + warehouse.value + "'>" + warehouse.text + "</option>";
+                    });
+                    $('#warehouseId').html(items);
+                });
+            });
+        });
+    </script>
+}

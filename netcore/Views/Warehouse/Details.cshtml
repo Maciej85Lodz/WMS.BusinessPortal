@@ -1,0 +1,117 @@
+﻿@model WMS.Models.Invent.Warehouse
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_AdminlteNetcoreDetails.cshtml";
+    ViewData["EntityIcon"] = "fa fa-cubes";
+}
+
+
+
+<div class="row">
+    <div class="col-md-9">
+        <!-- Default box -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="warehouseId" />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <small class="text-yellow"><i>Summary</i></small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group has-success">
+                                    <label asp-for="warehouseName" class="control-label"></label>
+                                    <input disabled asp-for="warehouseName" class="form-control" />
+                                    <span asp-validation-for="warehouseName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="description" class="control-label"></label>
+                            <textarea disabled asp-for="description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="description" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <small class="text-yellow"><i>Address</i></small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group has-success">
+                                    <label asp-for="street1" class="control-label"></label>
+                                    <input disabled asp-for="street1" class="form-control" />
+                                    <span asp-validation-for="street1" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="street2" class="control-label"></label>
+                                    <input disabled asp-for="street2" class="form-control" />
+                                    <span asp-validation-for="street2" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="city" class="control-label"></label>
+                                    <input disabled asp-for="city" class="form-control" />
+                                    <span asp-validation-for="city" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="province" class="control-label"></label>
+                                    <input disabled asp-for="province" class="form-control" />
+                                    <span asp-validation-for="province" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="country" class="control-label"></label>
+                                    <input disabled asp-for="country" class="form-control" />
+                                    <span asp-validation-for="country" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <small class="text-yellow"><i>Property</i></small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="branchId" class="control-label">Branch</label>
+                                    <select disabled asp-for="branchId" class="form-control select2" asp-items="ViewBag.branchId"></select>
+                                    <span asp-validation-for="branchId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <div class="form-group">
+                    <a asp-action="Edit" asp-route-id="@Model.warehouseId" class="btn btn-primary">Edit</a>
+                    <a asp-action="Index" class="btn btn-default">Back to List</a>
+                </div>
+            </div>
+            <!-- /.box-footer-->
+        </div>
+        <!-- /.box -->
+    </div>
+    <div class="col-md-3">
+        @await Html.PartialAsync("~/Views/Shared/_AdminlteNetcoreTimeline.cshtml")
+    </div>
+</div>
+
+
+

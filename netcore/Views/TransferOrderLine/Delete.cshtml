@@ -1,0 +1,39 @@
+﻿@model WMS.Models.Invent.TransferOrderLine
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_AdminlteNetcoreDelete.cshtml";
+}
+
+
+
+<div>
+    
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Qty)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Qty)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.createdAt)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.createdAt)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ItemType.ItemTypeId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TransferOrder)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TransferOrder.TransferOrderId)
+        </dd>
+    </dl>
+    
+</div>

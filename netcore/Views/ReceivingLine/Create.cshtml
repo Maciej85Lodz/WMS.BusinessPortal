@@ -1,0 +1,65 @@
+﻿@model WMS.Models.Invent.ReceivingLine
+
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_AdminlteNetcorePopup.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="ReceivingLineId" />
+        <div class="form-group hidden">
+            <label asp-for="ReceivingId" class="control-label"></label>
+            <select asp-for="ReceivingId" class="form-control select2" asp-items="ViewBag.receivingId"></select>
+        </div>
+        <div class="form-group hidden">
+            <label asp-for="BranchId" class="control-label"></label>
+            <select asp-for="BranchId" class="form-control select2" asp-items="ViewBag.branchId"></select>
+        </div>
+        <div class="form-group hidden">
+            <label asp-for="WarehouseId" class="control-label"></label>
+            <select asp-for="WarehouseId" class="form-control select2" asp-items="ViewBag.warehouseId"></select>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="ItemTypeId" class="control-label"></label>
+                    <select asp-for="ItemTypeId" class="form-control select2" asp-items="ViewBag.productId"></select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="QtyOrder" class="control-label"></label>
+                    <input asp-for="QtyOrder" class="form-control" />
+                    <span asp-validation-for="QtyOrder" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="QtyReceive" class="control-label"></label>
+                    <input asp-for="QtyReceive" class="form-control" />
+                    <span asp-validation-for="QtyReceive" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="form-group hidden">
+            <label asp-for="QtyInventory" class="control-label"></label>
+            <input asp-for="QtyInventory" class="form-control" />
+            <span asp-validation-for="QtyInventory" class="text-danger"></span>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

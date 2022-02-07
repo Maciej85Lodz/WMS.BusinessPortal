@@ -1,0 +1,114 @@
+﻿@model WMS.Models.Invent.TransferOrder
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_AdminlteNetcoreDelete.cshtml";
+    ViewData["EntityIcon"] = "fa fa-recycle";
+    ViewData["DeleteInfo"] = "[Completed] Transfer Order (TO) can not be deleted. Rollback status to [Open] by deleting related Goods Issue and Goods Receive";
+    ViewData["IsCanDeleted"] = false;
+    if (Model.TransferOrderStatus != WMS.Models.Invent.TransferOrderStatus.Completed
+        && Model.IsIssued == false
+        && Model.IsReceived == false)
+    {
+        ViewData["IsCanDeleted"] = true;
+    }
+}
+
+
+@Html.Partial("_StatusMessage", (string)ViewBag.StatusMessage)
+<div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <small class="text-yellow"><i>Summary</i></small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TransferOrderNumber" class="control-label"></label>
+                        <input disabled asp-for="TransferOrderNumber" class="form-control" disabled />
+                        <span asp-validation-for="TransferOrderNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group has-success">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea disabled asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TransferOrderDate" class="control-label"></label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input disabled asp-for="TransferOrderDate" value="@Model.TransferOrderDate.ToString("MM/dd/yyyy")" class="form-control pull-right datepicker" type="text" />
+                        </div>
+                        <span asp-validation-for="TransferOrderDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TransferOrderStatus" class="control-label"></label>
+                        <select disabled asp-for="TransferOrderStatus" class="form-control select2" asp-items="Html.GetEnumSelectList<WMS.Models.Invent.TransferOrderStatus>()"></select>
+                        <span asp-validation-for="TransferOrderStatus" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <small class="text-yellow"><i>Property</i></small>
+                </div>
+            </div>
+            <div class="row hidden">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="BranchIdFrom" class="control-label"></label>
+                        <select disabled asp-for="BranchIdFrom" class="form-control select2" asp-items="ViewBag.branchIdFrom"></select>
+                        <span asp-validation-for="BranchIdFrom" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="BranchIdTo" class="control-label"></label>
+                        <select disabled asp-for="BranchIdTo" class="form-control select2" asp-items="ViewBag.branchIdTo"></select>
+                        <span asp-validation-for="BranchIdTo" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WarehouseIdFrom" class="control-label"></label>
+                        <select disabled asp-for="WarehouseIdFrom" class="form-control select2" asp-items="ViewBag.warehouseIdFrom"></select>
+                        <span asp-validation-for="WarehouseIdFrom" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WarehouseIdTo" class="control-label"></label>
+                        <select disabled asp-for="WarehouseIdTo" class="form-control select2" asp-items="ViewBag.warehouseIdTo"></select>
+                        <span asp-validation-for="WarehouseIdTo" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group has-success">
+                        <label asp-for="PicName" class="control-label">Person in charge name</label>
+                        <input disabled asp-for="PicName" class="form-control" />
+                        <span asp-validation-for="PicName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>

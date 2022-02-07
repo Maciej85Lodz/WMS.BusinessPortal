@@ -1,0 +1,77 @@
+﻿@model IEnumerable<WMS.Models.Invent.ItemType>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminlteNetcoreIndex.cshtml";
+    ViewData["EntityIcon"] = "fa fa-tags";
+    ViewData["ListTitle"] = "ItemType List";
+    ViewData["IndexInfo"] = "ItemType is a merchandise that can be offered to the market for sell to satisfy demand. Before you can sell products to customers, you should have the ItemType stock in hand by buying the ItemType from vendors.";
+}
+
+
+<table class="table table-hover table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemTypeName)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.Barcode)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.ManufacturersNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemTypeType)
+            </th>
+            <th class="hidden">
+                @Html.DisplayNameFor(model => model.UOM)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="tools">
+                        <a asp-action="Edit" asp-route-id="@item.ItemTypeId" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>
+                        <a asp-action="Details" asp-route-id="@item.ItemTypeId" class="btn btn-primary btn-xs"><i class="fa fa-list"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.ItemTypeId" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
+                    </div>
+                    
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemTypeName)
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.Barcode)
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.ManufacturersNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemTypeType)
+                </td>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.UOM)
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

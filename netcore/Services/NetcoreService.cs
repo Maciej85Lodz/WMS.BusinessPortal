@@ -1,0 +1,579 @@
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using WMS.Data;
+using WMS.Models;
+using WMS.Models.Invent;
+using WMS.MVC;
+
+namespace WMS.Services
+{
+    public class NetcoreService : INetcoreService
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IRoles _roles;
+        private readonly SuperAdminDefaultOptions _superAdminDefaultOptions;
+
+        public NetcoreService(UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context,
+            SignInManager<ApplicationUser> signInManager,
+            IRoles roles,
+            IOptions<SuperAdminDefaultOptions> superAdminDefaultOptions)
+        {
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _context = context;
+            _signInManager = signInManager;
+            _roles = roles;
+            _superAdminDefaultOptions = superAdminDefaultOptions.Value;
+        }
+
+        public async Task SendEmailBySendGridAsync(string apiKey, string fromEmail, string fromFullName, string subject, string message, string email)
+        {
+            var client = new SendGridClient(apiKey);
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress(fromEmail, fromFullName),
+                Subject = subject,
+                PlainTextContent = message,
+                HtmlContent = message
+            };
+            msg.AddTo(new EmailAddress(email, email));
+            await client.SendEmailAsync(msg);
+
+        }
+
+        public async Task SendEmailByGmailAsync(string fromEmail,
+            string fromFullName,
+            string subject,
+            string messageBody,
+            string toEmail,
+            string toFullName,
+            string smtpUser,
+            string smtpPassword,
+            string smtpHost,
+            int smtpPort,
+            bool smtpSSL)
+        {
+            var body = messageBody;
+            var message = new MailMessage();
+            message.To.Add(new MailAddress(toEmail, toFullName));
+            message.From = new MailAddress(fromEmail, fromFullName);
+            message.Subject = subject;
+            message.Body = body;
+            message.IsBodyHtml = true;
+
+            using (var smtp = new SmtpClient())
+            {
+                var credential = new NetworkCredential
+                {
+                    UserName = smtpUser,
+                    Password = smtpPassword
+                };
+                smtp.Credentials = credential;
+                smtp.Host = smtpHost;
+                smtp.Port = smtpPort;
+                smtp.EnableSsl = smtpSSL;
+                await smtp.SendMailAsync(message);
+
+            }
+
+        }
+
+        public async Task<bool> IsAccountActivatedAsync(string email, UserManager<ApplicationUser> userManager)
+        {
+            bool result = false;
+            try
+            {
+                var user = await userManager.FindByNameAsync(email);
+                if (user != null)
+                {
+                    //Add this to check if the email was confirmed.
+                    if (await userManager.IsEmailConfirmedAsync(user))
+                    {
+                        result = true;
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return result;
+        }
+
+
+        public async Task<string> UploadFile(List<IFormFile> files, IWebHostEnvironment env)
+        {
+            var result = "";
+
+            var webRoot = env.WebRootPath;
+            var uploads = System.IO.Path.Combine(webRoot, "uploads");
+            var extension = "";
+            var filePath = "";
+            var fileName = "";
+
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    extension = System.IO.Path.GetExtension(formFile.FileName);
+                    fileName = Guid.NewGuid().ToString() + extension;
+                    filePath = System.IO.Path.Combine(uploads, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+
+                    result = fileName;
+
+                }
+            }
+
+            return result;
+        }
+
+        public async Task UpdateRoles(ApplicationUser appUser,
+            ApplicationUser currentLoginUser)
+        {
+            try
+            {
+                await _roles.UpdateRoles(appUser, currentLoginUser);
+
+                //so no need to manually re-signIn to make roles changes effective
+                if (currentLoginUser.Id == appUser.Id)
+                {
+                    await _signInManager.SignInAsync(appUser, false);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task CreateDefaultSuperAdmin()
+        {
+            try
+            {
+                ApplicationUser superAdmin = new ApplicationUser();
+                superAdmin.Email = _superAdminDefaultOptions.Email;
+                superAdmin.UserName = superAdmin.Email;
+                superAdmin.EmailConfirmed = true;
+                superAdmin.IsSuperAdmin = true;
+
+                Type t = superAdmin.GetType();
+                foreach (System.Reflection.PropertyInfo item in t.GetProperties())
+                {
+                    if (item.Name.Contains("Role"))
+                    {
+                        item.SetValue(superAdmin, true);
+                    }
+                }
+
+                await _userManager.CreateAsync(superAdmin, _superAdminDefaultOptions.Password);
+
+                //loop all the roles and then fill to SuperAdmin so he become powerfull
+                foreach (var item in typeof(Pages).GetNestedTypes())
+                {
+                    var roleName = item.Name;
+                    if (!await _roleManager.RoleExistsAsync(roleName)) { await _roleManager.CreateAsync(new IdentityRole(roleName)); }
+
+                    await _userManager.AddToRoleAsync(superAdmin, roleName);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public VMStock GetStockByItemTypeAndWarehouse(string ItemTypeId, string warehouseId)
+        {
+            VMStock result = new VMStock();
+
+            try
+            {
+                ItemType itemType = _context.ItemTypes.FirstOrDefault(x => x.ItemTypeId.Equals(ItemTypeId));
+                Warehouse warehouse = _context.Warehouse.FirstOrDefault(x => x.warehouseId.Equals(warehouseId));
+
+                if (itemType != null && warehouse != null)
+                {
+                    VMStock stock = new VMStock();
+                    stock.ItemType = itemType.ItemCode;
+                    stock.Warehouse = warehouse.warehouseName;
+                    stock.QtyReceiving = _context.ReceivingLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyReceive);
+                    stock.QtyShipment = _context.ShipmentLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyShipment);
+                    stock.QtyTransferIn = _context.TransferInLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferIn.WarehouseIdTo.Equals(warehouse.warehouseId)).Sum(x => x.Qty);
+                    stock.QtyTransferOut = _context.TransferOutLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferOut.WarehouseIdFrom.Equals(warehouse.warehouseId)).Sum(x => x.Qty);
+                    stock.QtyOnhand = stock.QtyReceiving + stock.QtyTransferIn - stock.QtyShipment - stock.QtyTransferOut;
+
+                    result = stock;
+                }
+
+                
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return result;
+
+        }
+
+        public List<VMStock> GetStockPerWarehouse()
+        {
+            List<VMStock> result = new List<VMStock>();
+
+            try
+            {
+                List<VMStock> stocks = new List<VMStock>();
+                List<ItemType> itemTypes = new List<ItemType>();
+                List<Warehouse> warehouses = new List<Warehouse>();
+                warehouses = _context.Warehouse.ToList();
+                itemTypes = _context.ItemTypes.ToList();
+                foreach (var item in itemTypes)
+                {
+                    foreach (var wh in warehouses)
+                    {
+                        VMStock stock = stock = GetStockByItemTypeAndWarehouse(item.ItemTypeId, wh.warehouseId);
+                        
+                        if (stock != null) stocks.Add(stock);
+
+                    }
+
+
+                }
+
+                result = stocks;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return result;
+        }
+
+        public List<TimelineViewModel> GetTimelinesByItemTypeId(string ItemTypeId)
+        {
+            List<TimelineViewModel> results = new List<TimelineViewModel>();
+
+            try
+            {
+                List<TimelineViewModel> times = new List<TimelineViewModel>();
+                List<PurchaseOrderLine> polist = _context.PurchaseOrderLine.Include(x => x.PurchaseOrder).Where(x => x.ItemTypeId.Equals(ItemTypeId)).OrderByDescending(x => x.PurchaseOrder.PurchaseOrderDate).Take(3).ToList();
+                List<SalesOrderLine> solist = _context.SalesOrderLine.Include(x => x.SalesOrder).Where(x => x.ItemTypeId.Equals(ItemTypeId)).OrderByDescending(x => x.SalesOrder.SalesOrderDate).Take(3).ToList();
+
+                foreach (var item in polist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.PurchaseOrder.PurchaseOrderDate.ToString("yyyy-MMM-dd"), Body = "New Purchase Order Created: " + item.PurchaseOrder.PurchaseOrderNumber + " ", Icon = "fa-file-text", CretedDate = item.PurchaseOrder.PurchaseOrderDate });
+                }
+
+                foreach (var item in solist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.SalesOrder.SalesOrderDate.ToString("yyyy-MMM-dd"), Body = "New Sales Order Created: " + item.SalesOrder.SalesOrderNumber + " ", Icon = "fa-cart-plus", CretedDate = item.SalesOrder.SalesOrderDate });
+                }
+
+                results = times.OrderByDescending(x => x.CretedDate).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return results;
+        }
+
+        public List<TimelineViewModel> GetTimelinesByBranchId(string branchId)
+        {
+            List<TimelineViewModel> results = new List<TimelineViewModel>();
+
+            try
+            {
+                List<TimelineViewModel> times = new List<TimelineViewModel>();
+                List<PurchaseOrder> polist = _context.PurchaseOrder.Where(x => x.BranchId.Equals(branchId)).OrderByDescending(x => x.PurchaseOrderDate).Take(3).ToList();
+                List<SalesOrder> solist = _context.SalesOrder.Where(x => x.BranchId.Equals(branchId)).OrderByDescending(x => x.SalesOrderDate).Take(3).ToList();
+
+                foreach (var item in polist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.PurchaseOrderDate.ToString("yyyy-MMM-dd"), Body = "New Purchase Order Created: " + item.PurchaseOrderNumber + " ", Icon = "fa-file-text", CretedDate = item.PurchaseOrderDate });
+                }
+
+                foreach (var item in solist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.SalesOrderDate.ToString("yyyy-MMM-dd"), Body = "New Sales Order Created: " + item.SalesOrderNumber + " ", Icon = "fa-cart-plus", CretedDate = item.SalesOrderDate });
+                }
+
+                results = times.OrderByDescending(x => x.CretedDate).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return results;
+        }
+
+        public List<TimelineViewModel> GetTimelinesByVendorId(string vendorId)
+        {
+            List<TimelineViewModel> results = new List<TimelineViewModel>();
+
+            try
+            {
+                List<TimelineViewModel> times = new List<TimelineViewModel>();
+                List<PurchaseOrder> polist = _context.PurchaseOrder.Where(x => x.VendorId.Equals(vendorId)).OrderByDescending(x => x.PurchaseOrderDate).Take(6).ToList();
+
+                foreach (var item in polist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.PurchaseOrderDate.ToString("yyyy-MMM-dd"), Body = "New Purchase Order Created: " + item.PurchaseOrderNumber + " ", Icon = "fa-file-text", CretedDate = item.PurchaseOrderDate });
+                }
+                
+
+                results = times.OrderByDescending(x => x.CretedDate).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return results;
+        }
+
+        public List<TimelineViewModel> GetTimelinesByCustomerId(string customerId)
+        {
+            List<TimelineViewModel> results = new List<TimelineViewModel>();
+
+            try
+            {
+                List<TimelineViewModel> times = new List<TimelineViewModel>();
+                List<SalesOrder> solist = _context.SalesOrder.Where(x => x.CustomerId.Equals(customerId)).OrderByDescending(x => x.SalesOrderDate).Take(3).ToList();
+                
+                foreach (var item in solist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.SalesOrderDate.ToString("yyyy-MMM-dd"), Body = "New Sales Order Created: " + item.SalesOrderNumber + " ", Icon = "fa-cart-plus", CretedDate = item.SalesOrderDate });
+                }
+
+                results = times.OrderByDescending(x => x.CretedDate).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return results;
+        }
+
+        public List<TimelineViewModel> GetTimelinesByPurchaseId(string purchaseId)
+        {
+            List<TimelineViewModel> results = new List<TimelineViewModel>();
+
+            try
+            {
+                List<TimelineViewModel> times = new List<TimelineViewModel>();
+                List<Receiving> list = _context.Receiving.Where(x => x.PurchaseOrderId.Equals(purchaseId)).ToList();
+
+                foreach (var item in list)
+                {
+                    times.Add(new TimelineViewModel { Header = item.ReceivingDate.ToString("yyyy-MMM-dd"), Body = "New Receiving Created: " + item.ReceivingNumber + " ", Icon = "fa-truck", CretedDate = item.ReceivingDate });
+                }
+
+                results = times.OrderByDescending(x => x.CretedDate).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return results;
+        }
+
+        public List<TimelineViewModel> GetTimelinesBySalesId(string salesId)
+        {
+            List<TimelineViewModel> results = new List<TimelineViewModel>();
+
+            try
+            {
+                List<TimelineViewModel> times = new List<TimelineViewModel>();
+                List<Shipment> list = _context.Shipment.Where(x => x.SalesOrderId.Equals(salesId)).ToList();
+
+                foreach (var item in list)
+                {
+                    times.Add(new TimelineViewModel { Header = item.ShipmentDate.ToString("yyyy-MMM-dd"), Body = "New Shipment Created: " + item.ShipmentNumber + " ", Icon = "fa-plane", CretedDate = item.ShipmentDate });
+                }
+
+                results = times.OrderByDescending(x => x.CretedDate).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return results;
+        }
+
+        public List<TimelineViewModel> GetTimelinesByTransferId(string transferId)
+        {
+            List<TimelineViewModel> results = new List<TimelineViewModel>();
+
+            try
+            {
+                List<TimelineViewModel> times = new List<TimelineViewModel>();
+                List<TransferOut> outlist = _context.TransferOut.Where(x => x.TransferOrderId.Equals(transferId)).OrderByDescending(x => x.TransferOutDate).Take(3).ToList();
+                List<TransferIn> inlist = _context.TransferIn.Where(x => x.TransferOrderId.Equals(transferId)).OrderByDescending(x => x.TransferInDate).Take(3).ToList();
+
+                foreach (var item in outlist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.TransferOutDate.ToString("yyyy-MMM-dd"), Body = "New Goods Issue Created: " + item.TransferOutNumber + " ", Icon = "fa-upload", CretedDate = item.TransferOutDate });
+                }
+
+                foreach (var item in inlist)
+                {
+                    times.Add(new TimelineViewModel { Header = item.TransferInDate.ToString("yyyy-MMM-dd"), Body = "New Goods Receive Created: " + item.TransferInNumber + " ", Icon = "fa-download", CretedDate = item.TransferInDate });
+                }
+
+                results = times.OrderByDescending(x => x.CretedDate).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return results;
+        }
+
+        public async Task InitDemo()
+        {
+            try
+            {
+              
+
+                Branch branch = new Branch() { branchName = "HQ", isDefaultBranch = true, street1 = "Rua Orós, 92" };
+                _context.Branch.Add(branch);
+
+                List<Warehouse> whs = new List<Warehouse>() {
+                    new Warehouse{warehouseName = "WH1", branch = branch, street1 = "Rua Orós, 92"},
+                    new Warehouse{warehouseName = "WH2", branch = branch, street1 = "C/ Moralzarzal, 86"},
+                    new Warehouse{warehouseName = "WH3", branch = branch, street1 = "184, chaussée de Tournai"},
+                    new Warehouse{warehouseName = "WH4", branch = branch, street1 = "Åkergatan 24"},
+                    new Warehouse{warehouseName = "WH5", branch = branch, street1 = "Berliner Platz 43"}
+                };
+
+                _context.Warehouse.AddRange(whs);
+
+                List<ItemType> itemTypes = new List<ItemType>() {
+                    new ItemType{ItemCode = "Chai", ItemTypeName = "Chai", ItemTypeType = ItemTypeType.Food, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Chang", ItemTypeName = "Chang", ItemTypeType = ItemTypeType.Food, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Aniseed Syrup", ItemTypeName = "Aniseed Syrup", ItemTypeType = ItemTypeType.Food, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Chef Anton's Cajun Seasoning", ItemTypeName = "Chef Anton's Cajun Seasoning", ItemTypeType = ItemTypeType.Food, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Chef Anton's Gumbo Mix", ItemTypeName = "Chef Anton's Gumbo Mix", ItemTypeType = ItemTypeType.Food, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Grandma's Boysenberry Spread", ItemTypeName = "Grandma's Boysenberry Spread", ItemTypeType = ItemTypeType.Electronic, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Uncle Bob's Organic Dried Pears", ItemTypeName = "Uncle Bob's Organic Dried Pears", ItemTypeType = ItemTypeType.Electronic, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Northwoods Cranberry Sauce", ItemTypeName = "Northwoods Cranberry Sauce", ItemTypeType = ItemTypeType.Electronic, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Mishi Kobe Niku", ItemTypeName = "Mishi Kobe Niku", ItemTypeType = ItemTypeType.Electronic, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Ikura", ItemTypeName = "Ikura", ItemTypeType = ItemTypeType.Electronic, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Queso Cabrales", ItemTypeName = "Queso Cabrales", ItemTypeType = ItemTypeType.FMCG, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Queso Manchego La Pastora", ItemTypeName = "Queso Manchego La Pastora", ItemTypeType = ItemTypeType.FMCG, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Konbu", ItemTypeName = "Konbu", ItemTypeType = ItemTypeType.FMCG, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Tofu", ItemTypeName = "Tofu", ItemTypeType = ItemTypeType.FMCG, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Genen Shouyu", ItemTypeName = "Genen Shouyu", ItemTypeType = ItemTypeType.FMCG, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Pavlova", ItemTypeName = "Pavlova", ItemTypeType = ItemTypeType.Fashion, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Alice Mutton", ItemTypeName = "Alice Mutton", ItemTypeType = ItemTypeType.Fashion, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Carnarvon Tigers", ItemTypeName = "Carnarvon Tigers", ItemTypeType = ItemTypeType.Fashion, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Teatime Chocolate Biscuits", ItemTypeName = "Teatime Chocolate Biscuits", ItemTypeType = ItemTypeType.Fashion, UOM = UOM.Pcs},
+                    new ItemType{ItemCode = "Sir Rodney's Marmalade", ItemTypeName = "Sir Rodney's Marmalade", ItemTypeType = ItemTypeType.Fashion, UOM = UOM.Pcs}
+
+                };
+                _context.ItemTypes.AddRange(itemTypes);
+
+                List<Vendor> vendors = new List<Vendor>() {
+                    new Vendor{vendorName = "Exotic Liquids", street1 = "49 Gilbert St.", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "New Orleans Cajun Delights", street1 = "P.O. Box 78934", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Grandma Kelly's Homestead", street1 = "707 Oxford Rd.", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Tokyo Traders", street1 = "9-8 Sekimai Musashino-shi", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Cooperativa de Quesos 'Las Cabras'", street1 = "Calle del Rosal 4", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Mayumi's", street1 = "92 Setsuko Chuo-ku", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Pavlova, Ltd.", street1 = "74 Rose St. Moonie Ponds", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Specialty Biscuits, Ltd.", street1 = "29 King's Way", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "PB Knäckebröd AB", street1 = "Kaloadagatan 13", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Refrescos Americanas LTDA", street1 = "Av. das Americanas 12.890", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Heli Süßwaren GmbH & Co. KG", street1 = "Tiergartenstraße 5", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Plutzer Lebensmittelgroßmärkte AG", street1 = "Bogenallee 51", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Nord-Ost-Fisch Handelsgesellschaft mbH", street1 = "Frahmredder 112a", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Formaggi Fortini s.r.l.", street1 = "Viale Dante, 75", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Norske Meierier", street1 = "Hatlevegen 5", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Bigfoot Breweries", street1 = "3400 - 8th Avenue Suite 210", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Svensk Sjöföda AB", street1 = "Brovallavägen 231", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "Aux joyeux ecclésiastiques", street1 = "203, Rue des Francs-Bourgeois", size = BusinessSize.Enterprise},
+                    new Vendor{vendorName = "New England Seafood Cannery", street1 = "Order Processing Dept. 2100 Paul Revere Blvd.", size = BusinessSize.Enterprise}
+                };
+                _context.Vendor.AddRange(vendors);
+
+                List<Customer> customers = new List<Customer>() {
+                    new Customer{customerName = "Hanari Carnes", street1 = "Rua do Paço, 67", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "HILARION-Abastos", street1 = "Carrera 22 con Ave. Carlos Soublette #8-35", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Hungry Coyote Import Store", street1 = "City Center Plaza 516 Main St.", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Hungry Owl All-Night Grocers", street1 = "8 Johnstown Road", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Island Trading", street1 = "Garden House Crowther Way", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Königlich Essen", street1 = "Maubelstr. 90", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "La corne d'abondance", street1 = "67, avenue de l'Europe", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "La maison d'Asie", street1 = "1 rue Alsace-Lorraine", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Laughing Bacchus Wine Cellars", street1 = "1900 Oak St.", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Lazy K Kountry Store", street1 = "12 Orchestra Terrace", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Lehmanns Marktstand", street1 = "Magazinweg 7", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Let's Stop N Shop", street1 = "87 Polk St. Suite 5", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "LILA-Supermercado", street1 = "Carrera 52 con Ave. Bolívar #65-98 Llano Largo", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "LINO-Delicateses", street1 = "Ave. 5 de Mayo Porlamar", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Lonesome Pine Restaurant", street1 = "89 Chiaroscuro Rd.", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Magazzini Alimentari Riuniti", street1 = "Via Ludovico il Moro 22", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Maison Dewey", street1 = "Rue Joseph-Bens 532", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Mère Paillarde", street1 = "43 rue St. Laurent", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Morgenstern Gesundkost", street1 = "Heerstr. 22", size = BusinessSize.Enterprise},
+                    new Customer{customerName = "Old World Delicatessen", street1 = "2743 Bering St.", size = BusinessSize.Enterprise}
+                };
+                _context.Customer.AddRange(customers);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+    }
+}
