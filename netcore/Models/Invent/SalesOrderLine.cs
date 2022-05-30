@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public SalesOrderLine()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.DiscountAmount = 0m;
             this.TotalAmount = 0m;
             this.SalesOrderLineId = Guid.NewGuid().ToString();

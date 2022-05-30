@@ -9,6 +9,6 @@ namespace WMS.Models
     public class INetcoreBasic
     {
         [Display(Name = "Created At")]
-        public DateTime createdAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

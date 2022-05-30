@@ -27,7 +27,7 @@ namespace WMS.Controllers.Invent
         // GET: Warehouse
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Warehouse.OrderByDescending(x => x.createdAt).Include(x => x.branch).ToListAsync());
+            return View(await _context.Warehouse.OrderByDescending(x => x.CreatedAt).Include(x => x.branch).ToListAsync());
         }
 
         // GET: Warehouse/Details/5

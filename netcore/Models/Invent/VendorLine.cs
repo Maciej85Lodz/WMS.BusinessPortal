@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public VendorLine()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.vendorLineId = Guid.NewGuid().ToString();
         }
 
@@ -34,48 +34,48 @@ namespace WMS.Models.Invent
         [Display(Name = "First Name")]
         [Required]
         [StringLength(20)]
-        public string firstName { get; set; }
+        public string FirstName { get; set; }
 
         [Display(Name = "Last Name")]
         [Required]
         [StringLength(20)]
-        public string lastName { get; set; }
+        public string LastName { get; set; }
 
         [Display(Name = "Middle Name")]
         [StringLength(20)]
-        public string middleName { get; set; }
+        public string MiddleName { get; set; }
 
         [Display(Name = "Nick Name")]
         [StringLength(20)]
-        public string nickName { get; set; }
+        public string NickName { get; set; }
 
         [Display(Name = "Gender")]
-        public Gender gender { get; set; }
+        public Gender Gender { get; set; }
 
         [Display(Name = "Salutation")]
-        public Salutation salutation { get; set; }
+        public Salutation Salutation { get; set; }
         //IBasePerson
 
         //IBaseCommunication
         [Display(Name = "Mobile Phone")]
         [StringLength(20)]
-        public string mobilePhone { get; set; }
+        public string MobilePhone { get; set; }
 
         [Display(Name = "Office Phone")]
         [StringLength(20)]
-        public string officePhone { get; set; }
+        public string OfficePhone { get; set; }
 
         [Display(Name = "Fax")]
         [StringLength(20)]
-        public string fax { get; set; }
+        public string Fax { get; set; }
 
         [Display(Name = "Personal Email")]
         [StringLength(50)]
-        public string personalEmail { get; set; }
+        public string PersonalEmail { get; set; }
 
         [Display(Name = "Work Email")]
         [StringLength(50)]
-        public string workEmail { get; set; }
+        public string WorkEmail { get; set; }
         //IBaseCommunication
     }
 }

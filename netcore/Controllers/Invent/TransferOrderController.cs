@@ -50,7 +50,7 @@ namespace WMS.Controllers.Invent
         public async Task<IActionResult> Index()
         {
             List<TransferOrder> lists = new List<TransferOrder>();
-            lists = await _context.TransferOrder.OrderByDescending(x => x.createdAt)
+            lists = await _context.TransferOrder.OrderByDescending(x => x.CreatedAt)
                 .Include(x => x.BranchFrom)
                 .Include(x => x.BranchTo)
                 .Include(x => x.WarehouseFrom)

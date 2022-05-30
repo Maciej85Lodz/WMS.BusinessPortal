@@ -27,7 +27,7 @@ namespace WMS.Controllers.Invent
         // GET: Vendor
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Vendor.OrderByDescending(x => x.createdAt).ToListAsync());
+            return View(await _context.Vendor.OrderByDescending(x => x.CreatedAt).ToListAsync());
         }
 
         // GET: Vendor/Details/5
@@ -39,7 +39,7 @@ namespace WMS.Controllers.Invent
             }
 
             var vendor = await _context.Vendor
-                        .SingleOrDefaultAsync(m => m.vendorId == id);
+                        .SingleOrDefaultAsync(m => m.VendorId == id);
             if (vendor == null)
             {
                 return NotFound();
@@ -68,8 +68,8 @@ namespace WMS.Controllers.Invent
             {
                 _context.Add(vendor);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Create Vendor " + vendor.vendorName + " Success";
-                return RedirectToAction(nameof(Details), new { id = vendor.vendorId });
+                TempData["TransMessage"] = "Create Vendor " + vendor.VendorName + " Success";
+                return RedirectToAction(nameof(Details), new { id = vendor.VendorId });
             }
             return View(vendor);
         }
@@ -82,7 +82,7 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            var vendor = await _context.Vendor.SingleOrDefaultAsync(m => m.vendorId == id);
+            var vendor = await _context.Vendor.SingleOrDefaultAsync(m => m.VendorId == id);
             if (vendor == null)
             {
                 return NotFound();
@@ -95,7 +95,7 @@ namespace WMS.Controllers.Invent
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("VendorId,vendorName,Description,size,street1,street2,city,province,country,HasChild,createdAt")] Vendor vendor)
         {
-            if (id != vendor.vendorId)
+            if (id != vendor.VendorId)
             {
                 return NotFound();
             }
@@ -109,7 +109,7 @@ namespace WMS.Controllers.Invent
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VendorExists(vendor.vendorId))
+                    if (!VendorExists(vendor.VendorId))
                     {
                         return NotFound();
                     }
@@ -118,7 +118,7 @@ namespace WMS.Controllers.Invent
                         throw;
                     }
                 }
-                TempData["TransMessage"] = "Edit Vendor " + vendor.vendorName + " Success";
+                TempData["TransMessage"] = "Edit Vendor " + vendor.VendorName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             return View(vendor);
@@ -133,7 +133,7 @@ namespace WMS.Controllers.Invent
             }
 
             var vendor = await _context.Vendor
-                    .SingleOrDefaultAsync(m => m.vendorId == id);
+                    .SingleOrDefaultAsync(m => m.VendorId == id);
             if (vendor == null)
             {
                 return NotFound();
@@ -150,13 +150,13 @@ namespace WMS.Controllers.Invent
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var vendor = await _context.Vendor.Include(x => x.vendorLine).SingleOrDefaultAsync(m => m.vendorId == id);
+            var vendor = await _context.Vendor.Include(x => x.VendorLine).SingleOrDefaultAsync(m => m.VendorId == id);
             try
             {
-                _context.VendorLine.RemoveRange(vendor.vendorLine);
+                _context.VendorLine.RemoveRange(vendor.VendorLine);
                 _context.Vendor.Remove(vendor);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Delete Vendor " + vendor.vendorName + " Success";
+                TempData["TransMessage"] = "Delete Vendor " + vendor.VendorName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -170,7 +170,7 @@ namespace WMS.Controllers.Invent
 
         private bool VendorExists(string id)
         {
-            return _context.Vendor.Any(e => e.vendorId == id);
+            return _context.Vendor.Any(e => e.VendorId == id);
         }
 
     }

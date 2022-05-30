@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public TransferOut()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.TransferOutNumber = DateTime.UtcNow.Date.ToString("yyyyMMdd") + Guid.NewGuid().ToString().Substring(0, 5).ToUpper() + "#OUT";
             this.TransferOutDate = DateTime.UtcNow;
             this.TransferOutId = Guid.NewGuid().ToString();

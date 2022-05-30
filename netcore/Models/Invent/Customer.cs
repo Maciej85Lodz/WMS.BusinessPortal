@@ -10,50 +10,50 @@ namespace WMS.Models.Invent
     {
         public Customer()
         {
-            this.createdAt = DateTime.UtcNow;
-            this.customerId = Guid.NewGuid().ToString();
+            this.CreatedAt = DateTime.UtcNow;
+            this.CustomerId = Guid.NewGuid().ToString();
         }
 
         [StringLength(38)]
         [Display(Name = "Customer Id")]
-        public string customerId { get; set; }
+        public string CustomerId { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Customer Name")]
         [Required]
-        public string customerName { get; set; }
+        public string CustomerName { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Description")]
-        public string description { get; set; }
+        public string Description { get; set; }
 
         [Display(Name = "Business Size")]
-        public BusinessSize size { get; set; }
+        public BusinessSize Size { get; set; }
 
         //IBaseAddress
         [Display(Name = "Street Address 1")]
         [Required]
         [StringLength(50)]
-        public string street1 { get; set; }
+        public string Street1 { get; set; }
 
         [Display(Name = "Street Address 2")]
         [StringLength(50)]
-        public string street2 { get; set; }
+        public string Street2 { get; set; }
 
         [Display(Name = "City")]
         [StringLength(30)]
-        public string city { get; set; }
+        public string City { get; set; }
 
         [Display(Name = "Province")]
         [StringLength(30)]
-        public string province { get; set; }
+        public string Province { get; set; }
 
         [Display(Name = "Country")]
         [StringLength(30)]
-        public string country { get; set; }
+        public string Country { get; set; }
         //IBaseAddress
 
         [Display(Name = "Customer Contacts")]
-        public List<CustomerLine> customerLine { get; set; } = new List<CustomerLine>();
+        public List<CustomerLine> CustomerLine { get; set; } = new List<CustomerLine>();
     }
 }

@@ -27,7 +27,7 @@ namespace WMS.Controllers.Invent
         // GET: CustomerLine
         public async Task<IActionResult> Index()
         {
-                    var applicationDbContext = _context.CustomerLine.Include(c => c.customer);
+                    var applicationDbContext = _context.CustomerLine.Include(c => c.Customer);
                     return View(await applicationDbContext.ToListAsync());
         }        
 
@@ -40,8 +40,8 @@ namespace WMS.Controllers.Invent
         }
 
         var customerLine = await _context.CustomerLine
-                .Include(c => c.customer)
-                    .SingleOrDefaultAsync(m => m.customerLineId == id);
+                .Include(c => c.Customer)
+                    .SingleOrDefaultAsync(m => m.CustomerLineId == id);
         if (customerLine == null)
         {
             return NotFound();
@@ -54,15 +54,15 @@ namespace WMS.Controllers.Invent
     // GET: CustomerLine/Create
     public IActionResult Create(string masterid, string id)
     {
-        var check = _context.CustomerLine.SingleOrDefault(m => m.customerLineId == id);
-        var selected = _context.Customer.SingleOrDefault(m => m.customerId == masterid);
+        var check = _context.CustomerLine.SingleOrDefault(m => m.CustomerLineId == id);
+        var selected = _context.Customer.SingleOrDefault(m => m.CustomerId == masterid);
             ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId");
         if (check == null)
         {
             CustomerLine objline = new CustomerLine();
-            objline.customerLineId = string.Empty;
-            objline.customer = selected;
-            objline.customerId = masterid;
+            objline.CustomerLineId = string.Empty;
+            objline.Customer = selected;
+            objline.CustomerId = masterid;
             return View(objline);
         }
         else
@@ -85,7 +85,7 @@ namespace WMS.Controllers.Invent
             await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
         }
-                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", customerLine.customerId);
+                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", customerLine.CustomerId);
         return View(customerLine);
     }
 
@@ -97,12 +97,12 @@ namespace WMS.Controllers.Invent
             return NotFound();
         }
 
-        var customerLine = await _context.CustomerLine.SingleOrDefaultAsync(m => m.customerLineId == id);
+        var customerLine = await _context.CustomerLine.SingleOrDefaultAsync(m => m.CustomerLineId == id);
         if (customerLine == null)
         {
             return NotFound();
         }
-                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", customerLine.customerId);
+                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", customerLine.CustomerId);
         return View(customerLine);
     }
 
@@ -111,7 +111,7 @@ namespace WMS.Controllers.Invent
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(string id, [Bind("customerLineId,jobTitle,CustomerId,firstName,lastName,middleName,nickName,gender,salutation,mobilePhone,officePhone,fax,personalEmail,workEmail,createdAt")] CustomerLine customerLine)
     {
-        if (id != customerLine.customerLineId)
+        if (id != customerLine.CustomerLineId)
         {
             return NotFound();
         }
@@ -125,7 +125,7 @@ namespace WMS.Controllers.Invent
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CustomerLineExists(customerLine.customerLineId))
+                if (!CustomerLineExists(customerLine.CustomerLineId))
                 {
                     return NotFound();
                 }
@@ -136,7 +136,7 @@ namespace WMS.Controllers.Invent
             }
         return RedirectToAction(nameof(Index));
         }
-                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", customerLine.customerId);
+                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerId", customerLine.CustomerId);
         return View(customerLine);
     }
 
@@ -149,8 +149,8 @@ namespace WMS.Controllers.Invent
         }
 
         var customerLine = await _context.CustomerLine
-                .Include(c => c.customer)
-                .SingleOrDefaultAsync(m => m.customerLineId == id);
+                .Include(c => c.Customer)
+                .SingleOrDefaultAsync(m => m.CustomerLineId == id);
         if (customerLine == null)
         {
             return NotFound();
@@ -167,7 +167,7 @@ namespace WMS.Controllers.Invent
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
-        var customerLine = await _context.CustomerLine.SingleOrDefaultAsync(m => m.customerLineId == id);
+        var customerLine = await _context.CustomerLine.SingleOrDefaultAsync(m => m.CustomerLineId == id);
             _context.CustomerLine.Remove(customerLine);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
@@ -175,7 +175,7 @@ namespace WMS.Controllers.Invent
 
     private bool CustomerLineExists(string id)
     {
-        return _context.CustomerLine.Any(e => e.customerLineId == id);
+        return _context.CustomerLine.Any(e => e.CustomerLineId == id);
     }
 
   }

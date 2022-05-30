@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public Shipment()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.ShipmentNumber = DateTime.UtcNow.Date.ToString("yyyyMMdd") + Guid.NewGuid().ToString().Substring(0, 5).ToUpper() + "#DO";
             this.ShipmentDate = DateTime.UtcNow;
             this.ExpeditionType = ExpeditionType.Internal;

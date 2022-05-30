@@ -78,20 +78,17 @@ namespace WMS.Services
             message.Body = body;
             message.IsBodyHtml = true;
 
-            using (var smtp = new SmtpClient())
+            using var smtp = new SmtpClient();
+            var credential = new NetworkCredential
             {
-                var credential = new NetworkCredential
-                {
-                    UserName = smtpUser,
-                    Password = smtpPassword
-                };
-                smtp.Credentials = credential;
-                smtp.Host = smtpHost;
-                smtp.Port = smtpPort;
-                smtp.EnableSsl = smtpSSL;
-                await smtp.SendMailAsync(message);
-
-            }
+                UserName = smtpUser,
+                Password = smtpPassword
+            };
+            smtp.Credentials = credential;
+            smtp.Host = smtpHost;
+            smtp.Port = smtpPort;
+            smtp.EnableSsl = smtpSSL;
+            await smtp.SendMailAsync(message);
 
         }
 
@@ -177,8 +174,10 @@ namespace WMS.Services
         {
             try
             {
-                ApplicationUser superAdmin = new ApplicationUser();
-                superAdmin.Email = _superAdminDefaultOptions.Email;
+                ApplicationUser superAdmin = new ApplicationUser
+                {
+                    Email = _superAdminDefaultOptions.Email
+                };
                 superAdmin.UserName = superAdmin.Email;
                 superAdmin.EmailConfirmed = true;
                 superAdmin.IsSuperAdmin = true;
@@ -221,13 +220,15 @@ namespace WMS.Services
 
                 if (itemType != null && warehouse != null)
                 {
-                    VMStock stock = new VMStock();
-                    stock.ItemType = itemType.ItemCode;
-                    stock.Warehouse = warehouse.warehouseName;
-                    stock.QtyReceiving = _context.ReceivingLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyReceive);
-                    stock.QtyShipment = _context.ShipmentLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyShipment);
-                    stock.QtyTransferIn = _context.TransferInLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferIn.WarehouseIdTo.Equals(warehouse.warehouseId)).Sum(x => x.Qty);
-                    stock.QtyTransferOut = _context.TransferOutLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferOut.WarehouseIdFrom.Equals(warehouse.warehouseId)).Sum(x => x.Qty);
+                    VMStock stock = new VMStock
+                    {
+                        ItemType = itemType.ItemCode,
+                        Warehouse = warehouse.warehouseName,
+                        QtyReceiving = _context.ReceivingLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyReceive),
+                        QtyShipment = _context.ShipmentLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyShipment),
+                        QtyTransferIn = _context.TransferInLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferIn.WarehouseIdTo.Equals(warehouse.warehouseId)).Sum(x => x.Qty),
+                        QtyTransferOut = _context.TransferOutLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferOut.WarehouseIdFrom.Equals(warehouse.warehouseId)).Sum(x => x.Qty)
+                    };
                     stock.QtyOnhand = stock.QtyReceiving + stock.QtyTransferIn - stock.QtyShipment - stock.QtyTransferOut;
 
                     result = stock;
@@ -480,15 +481,15 @@ namespace WMS.Services
             {
               
 
-                Branch branch = new Branch() { branchName = "HQ", isDefaultBranch = true, street1 = "Rua Orós, 92" };
+                Branch branch = new Branch() { BranchName = "HQ", IsDefaultBranch = true, Street1 = "Rua Orós, 92" };
                 _context.Branch.Add(branch);
 
                 List<Warehouse> whs = new List<Warehouse>() {
-                    new Warehouse{warehouseName = "WH1", branch = branch, street1 = "Rua Orós, 92"},
-                    new Warehouse{warehouseName = "WH2", branch = branch, street1 = "C/ Moralzarzal, 86"},
-                    new Warehouse{warehouseName = "WH3", branch = branch, street1 = "184, chaussée de Tournai"},
-                    new Warehouse{warehouseName = "WH4", branch = branch, street1 = "Åkergatan 24"},
-                    new Warehouse{warehouseName = "WH5", branch = branch, street1 = "Berliner Platz 43"}
+                    new Warehouse{warehouseName = "WH1", branch = branch, Street1 = "Rua Orós, 92"},
+                    new Warehouse{warehouseName = "WH2", branch = branch, Street1 = "C/ Moralzarzal, 86"},
+                    new Warehouse{warehouseName = "WH3", branch = branch, Street1 = "184, chaussée de Tournai"},
+                    new Warehouse{warehouseName = "WH4", branch = branch, Street1 = "Åkergatan 24"},
+                    new Warehouse{warehouseName = "WH5", branch = branch, Street1 = "Berliner Platz 43"}
                 };
 
                 _context.Warehouse.AddRange(whs);
@@ -519,49 +520,49 @@ namespace WMS.Services
                 _context.ItemTypes.AddRange(itemTypes);
 
                 List<Vendor> vendors = new List<Vendor>() {
-                    new Vendor{vendorName = "Exotic Liquids", street1 = "49 Gilbert St.", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "New Orleans Cajun Delights", street1 = "P.O. Box 78934", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Grandma Kelly's Homestead", street1 = "707 Oxford Rd.", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Tokyo Traders", street1 = "9-8 Sekimai Musashino-shi", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Cooperativa de Quesos 'Las Cabras'", street1 = "Calle del Rosal 4", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Mayumi's", street1 = "92 Setsuko Chuo-ku", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Pavlova, Ltd.", street1 = "74 Rose St. Moonie Ponds", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Specialty Biscuits, Ltd.", street1 = "29 King's Way", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "PB Knäckebröd AB", street1 = "Kaloadagatan 13", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Refrescos Americanas LTDA", street1 = "Av. das Americanas 12.890", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Heli Süßwaren GmbH & Co. KG", street1 = "Tiergartenstraße 5", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Plutzer Lebensmittelgroßmärkte AG", street1 = "Bogenallee 51", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Nord-Ost-Fisch Handelsgesellschaft mbH", street1 = "Frahmredder 112a", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Formaggi Fortini s.r.l.", street1 = "Viale Dante, 75", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Norske Meierier", street1 = "Hatlevegen 5", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Bigfoot Breweries", street1 = "3400 - 8th Avenue Suite 210", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Svensk Sjöföda AB", street1 = "Brovallavägen 231", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "Aux joyeux ecclésiastiques", street1 = "203, Rue des Francs-Bourgeois", size = BusinessSize.Enterprise},
-                    new Vendor{vendorName = "New England Seafood Cannery", street1 = "Order Processing Dept. 2100 Paul Revere Blvd.", size = BusinessSize.Enterprise}
+                    new Vendor{VendorName = "Exotic Liquids", Street1 = "49 Gilbert St.", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "New Orleans Cajun Delights", Street1 = "P.O. Box 78934", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Grandma Kelly's Homestead", Street1 = "707 Oxford Rd.", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Tokyo Traders", Street1 = "9-8 Sekimai Musashino-shi", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Cooperativa de Quesos 'Las Cabras'", Street1 = "Calle del Rosal 4", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Mayumi's", Street1 = "92 Setsuko Chuo-ku", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Pavlova, Ltd.", Street1 = "74 Rose St. Moonie Ponds", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Specialty Biscuits, Ltd.", Street1 = "29 King's Way", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "PB Knäckebröd AB", Street1 = "Kaloadagatan 13", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Refrescos Americanas LTDA", Street1 = "Av. das Americanas 12.890", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Heli Süßwaren GmbH & Co. KG", Street1 = "Tiergartenstraße 5", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Plutzer Lebensmittelgroßmärkte AG", Street1 = "Bogenallee 51", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Nord-Ost-Fisch Handelsgesellschaft mbH", Street1 = "Frahmredder 112a", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Formaggi Fortini s.r.l.", Street1 = "Viale Dante, 75", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Norske Meierier", Street1 = "Hatlevegen 5", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Bigfoot Breweries", Street1 = "3400 - 8th Avenue Suite 210", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Svensk Sjöföda AB", Street1 = "Brovallavägen 231", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "Aux joyeux ecclésiastiques", Street1 = "203, Rue des Francs-Bourgeois", Size = BusinessSize.Enterprise},
+                    new Vendor{VendorName = "New England Seafood Cannery", Street1 = "Order Processing Dept. 2100 Paul Revere Blvd.", Size = BusinessSize.Enterprise}
                 };
                 _context.Vendor.AddRange(vendors);
 
                 List<Customer> customers = new List<Customer>() {
-                    new Customer{customerName = "Hanari Carnes", street1 = "Rua do Paço, 67", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "HILARION-Abastos", street1 = "Carrera 22 con Ave. Carlos Soublette #8-35", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Hungry Coyote Import Store", street1 = "City Center Plaza 516 Main St.", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Hungry Owl All-Night Grocers", street1 = "8 Johnstown Road", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Island Trading", street1 = "Garden House Crowther Way", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Königlich Essen", street1 = "Maubelstr. 90", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "La corne d'abondance", street1 = "67, avenue de l'Europe", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "La maison d'Asie", street1 = "1 rue Alsace-Lorraine", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Laughing Bacchus Wine Cellars", street1 = "1900 Oak St.", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Lazy K Kountry Store", street1 = "12 Orchestra Terrace", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Lehmanns Marktstand", street1 = "Magazinweg 7", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Let's Stop N Shop", street1 = "87 Polk St. Suite 5", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "LILA-Supermercado", street1 = "Carrera 52 con Ave. Bolívar #65-98 Llano Largo", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "LINO-Delicateses", street1 = "Ave. 5 de Mayo Porlamar", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Lonesome Pine Restaurant", street1 = "89 Chiaroscuro Rd.", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Magazzini Alimentari Riuniti", street1 = "Via Ludovico il Moro 22", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Maison Dewey", street1 = "Rue Joseph-Bens 532", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Mère Paillarde", street1 = "43 rue St. Laurent", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Morgenstern Gesundkost", street1 = "Heerstr. 22", size = BusinessSize.Enterprise},
-                    new Customer{customerName = "Old World Delicatessen", street1 = "2743 Bering St.", size = BusinessSize.Enterprise}
+                    new Customer{CustomerName = "Hanari Carnes", Street1 = "Rua do Paço, 67", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "HILARION-Abastos", Street1 = "Carrera 22 con Ave. Carlos Soublette #8-35", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Hungry Coyote Import Store", Street1 = "City Center Plaza 516 Main St.", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Hungry Owl All-Night Grocers", Street1 = "8 Johnstown Road", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Island Trading", Street1 = "Garden House Crowther Way", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Königlich Essen", Street1 = "Maubelstr. 90", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "La corne d'abondance", Street1 = "67, avenue de l'Europe", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "La maison d'Asie", Street1 = "1 rue Alsace-Lorraine", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Laughing Bacchus Wine Cellars", Street1 = "1900 Oak St.", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Lazy K Kountry Store", Street1 = "12 Orchestra Terrace", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Lehmanns Marktstand", Street1 = "Magazinweg 7", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Let's Stop N Shop", Street1 = "87 Polk St. Suite 5", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "LILA-Supermercado", Street1 = "Carrera 52 con Ave. Bolívar #65-98 Llano Largo", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "LINO-Delicateses", Street1 = "Ave. 5 de Mayo Porlamar", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Lonesome Pine Restaurant", Street1 = "89 Chiaroscuro Rd.", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Magazzini Alimentari Riuniti", Street1 = "Via Ludovico il Moro 22", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Maison Dewey", Street1 = "Rue Joseph-Bens 532", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Mère Paillarde", Street1 = "43 rue St. Laurent", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Morgenstern Gesundkost", Street1 = "Heerstr. 22", Size = BusinessSize.Enterprise},
+                    new Customer{CustomerName = "Old World Delicatessen", Street1 = "2743 Bering St.", Size = BusinessSize.Enterprise}
                 };
                 _context.Customer.AddRange(customers);
 

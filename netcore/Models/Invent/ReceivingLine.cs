@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public ReceivingLine()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.ReceivingLineId = Guid.NewGuid().ToString(); 
         }
 

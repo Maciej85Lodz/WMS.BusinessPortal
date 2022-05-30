@@ -11,26 +11,26 @@ namespace WMS.Models.Invent
         [Display(Name = "First Name")]
         [Required]
         [StringLength(20)]
-        string firstName { get; set; }
+        string FirstName { get; set; }
 
         [Display(Name = "Last Name")]
         [Required]
         [StringLength(20)]
-        string lastName { get; set; }
+        string LastName { get; set; }
 
         [Display(Name = "Middle Name")]
         [StringLength(20)]
-        string middleName { get; set; }
+        string MiddleName { get; set; }
 
         [Display(Name = "Nick Name")]
         [StringLength(20)]
-        string nickName { get; set; }
+        string NickName { get; set; }
 
         [Display(Name = "Gender")]
-        Gender gender { get; set; }
+        Gender Gender { get; set; }
 
         [Display(Name = "Salutation")]
-        Salutation salutation { get; set; }
+        Salutation Salutation { get; set; }
     }
 
 

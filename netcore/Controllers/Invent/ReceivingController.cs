@@ -34,7 +34,7 @@ namespace WMS.Controllers.Invent
 
             if (po != null)
             {
-                warehouseList = _context.Warehouse.Where(x => x.branchId.Equals(po.Branch.branchId)).ToList();
+                warehouseList = _context.Warehouse.Where(x => x.branchId.Equals(po.Branch.BranchId)).ToList();
             }
             
             warehouseList.Insert(0, new Warehouse { warehouseId = "0", warehouseName = "Select" });
@@ -67,7 +67,7 @@ namespace WMS.Controllers.Invent
         // GET: Receiving
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Receiving.OrderByDescending(x => x.createdAt).Include(r => r.Branch).Include(r => r.PurchaseOrder).Include(r => r.Vendor).Include(r => r.Warehouse);
+            var applicationDbContext = _context.Receiving.OrderByDescending(x => x.CreatedAt).Include(r => r.Branch).Include(r => r.PurchaseOrder).Include(r => r.Vendor).Include(r => r.Warehouse);
             return View(await applicationDbContext.ToListAsync());
         }
 

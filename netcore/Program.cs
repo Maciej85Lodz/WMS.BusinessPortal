@@ -48,18 +48,18 @@ namespace WMS
         //AzureAppService log activated by default if application hosted on Azure
         //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1&tabs=aspnetcore2x#appservice
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                 .ConfigureLogging((hostingContext, logging) =>
-                 {
-                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                     logging.AddConsole();
-                     logging.AddDebug();
-                 })
-                .UseUrls("http://localhost:5011")
-                .UseStartup<Startup>()
-                .Build();
-
-        
+        public static IWebHost BuildWebHost(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
+.ConfigureLogging((hostingContext, logging) =>
+{
+    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+    logging.AddConsole();
+    logging.AddDebug();
+})
+.UseUrls("http://localhost:5011")
+.UseStartup<Startup>()
+.Build();
+        }
     }
 }

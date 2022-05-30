@@ -10,10 +10,10 @@ namespace WMS.Models.Invent
     {
         public PurchaseOrder()
         {
-            this.createdAt = DateTime.UtcNow;
-            this.PurchaseOrderNumber = DateTime.UtcNow.Date.ToString("yyyyMMdd") + Guid.NewGuid().ToString().Substring(0, 5).ToUpper() + "#PO";
+            this.CreatedAt = DateTime.UtcNow.Date;
+            this.PurchaseOrderNumber = DateTime.UtcNow.Date.ToString("dd/mm/yyyy") + Guid.NewGuid().ToString().Substring(0,6).ToUpper() + "#PO";
             this.PurchaseOrderDate = DateTime.UtcNow.Date;
-            this.DeliveryDate = this.PurchaseOrderDate.AddDays(5);
+            this.DeliveryDate = this.PurchaseOrderDate.Date;
             this.PurchaseOrderStatus = PurchaseOrderStatus.Draft;
             this.TotalDiscountAmount = 0m;
             this.TotalOrderAmount = 0m;

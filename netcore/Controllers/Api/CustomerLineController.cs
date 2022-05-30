@@ -28,7 +28,7 @@ namespace WMS.Controllers.Api
         [Authorize]
         public IActionResult GetCustomerLine(string masterid)
         {
-            return Json(new { data = _context.CustomerLine.Where(x => x.customerId.Equals(masterid)).ToList() });
+            return Json(new { data = _context.CustomerLine.Where(x => x.CustomerId.Equals(masterid)).ToList() });
         }
 
         // POST: api/CustomerLine
@@ -41,18 +41,18 @@ namespace WMS.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            if (customerLine.customerLineId == string.Empty)
+            if (customerLine.CustomerLineId == string.Empty)
             {
-                customerLine.customerLineId = Guid.NewGuid().ToString();
+                customerLine.CustomerLineId = Guid.NewGuid().ToString();
                 _context.CustomerLine.Add(customerLine);
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Add new contact " + customerLine.firstName + " " + customerLine.lastName + " success." });
+                return Json(new { success = true, message = "Add new contact " + customerLine.FirstName + " " + customerLine.LastName + " success." });
             }
             else
             {
                 _context.Update(customerLine);
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Edit contact " + customerLine.firstName + " " + customerLine.lastName + " success." });
+                return Json(new { success = true, message = "Edit contact " + customerLine.FirstName + " " + customerLine.LastName + " success." });
             }
 
         }
@@ -67,7 +67,7 @@ namespace WMS.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            var customerLine = await _context.CustomerLine.SingleOrDefaultAsync(m => m.customerLineId == id);
+            var customerLine = await _context.CustomerLine.SingleOrDefaultAsync(m => m.CustomerLineId == id);
             if (customerLine == null)
             {
                 return NotFound();
@@ -76,13 +76,13 @@ namespace WMS.Controllers.Api
             _context.CustomerLine.Remove(customerLine);
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Delete " + customerLine.firstName + " " + customerLine.lastName + " success." });
+            return Json(new { success = true, message = "Delete " + customerLine.FirstName + " " + customerLine.LastName + " success." });
         }
 
 
         private bool CustomerLineExists(string id)
         {
-            return _context.CustomerLine.Any(e => e.customerLineId == id);
+            return _context.CustomerLine.Any(e => e.CustomerLineId == id);
         }
 
 

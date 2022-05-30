@@ -55,7 +55,7 @@ namespace WMS.Controllers.Invent
         // GET: TransferOut
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.TransferOut.OrderByDescending(x => x.createdAt).Include(t => t.TransferOrder);
+            var applicationDbContext = _context.TransferOut.OrderByDescending(x => x.CreatedAt).Include(t => t.TransferOrder);
             return View(await applicationDbContext.ToListAsync());
         }
 

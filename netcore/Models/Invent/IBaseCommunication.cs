@@ -10,23 +10,23 @@ namespace WMS.Models.Invent
     {
         [Display(Name = "Mobile Phone")]
         [StringLength(20)]
-        string mobilePhone { get; set; }
+        string MobilePhone { get; set; }
 
         [Display(Name = "Office Phone")]
         [StringLength(20)]
-        string officePhone { get; set; }
+        string OfficePhone { get; set; }
 
         [Display(Name = "Fax")]
         [StringLength(20)]
-        string fax { get; set; }
+        string Fax { get; set; }
 
         [Display(Name = "Personal Email")]
         [StringLength(50)]
-        string personalEmail { get; set; }
+        string PersonalEmail { get; set; }
 
         [Display(Name = "Work Email")]
         [StringLength(50)]
-        string workEmail { get; set; }
+        string WorkEmail { get; set; }
 
     }
 }

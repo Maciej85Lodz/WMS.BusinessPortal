@@ -10,43 +10,43 @@
     <thead>
         <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.jobTitle)
+                    @Html.DisplayNameFor(model => model.JobTitle)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.firstName)
+                    @Html.DisplayNameFor(model => model.FirstName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.lastName)
+                    @Html.DisplayNameFor(model => model.LastName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.middleName)
+                    @Html.DisplayNameFor(model => model.MiddleName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.nickName)
+                    @Html.DisplayNameFor(model => model.NickName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.gender)
+                    @Html.DisplayNameFor(model => model.Gender)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.salutation)
+                    @Html.DisplayNameFor(model => model.Salutation)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.mobilePhone)
+                    @Html.DisplayNameFor(model => model.MobilePhone)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.officePhone)
+                    @Html.DisplayNameFor(model => model.OfficePhone)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.fax)
+                    @Html.DisplayNameFor(model => model.Fax)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.personalEmail)
+                    @Html.DisplayNameFor(model => model.PersonalEmail)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.workEmail)
+                    @Html.DisplayNameFor(model => model.WorkEmail)
                 </th>
             <th>
-                @Html.DisplayNameFor(model => model.customer)
+                @Html.DisplayNameFor(model => model.Customer)
             </th>
             <th></th>
         </tr>
@@ -55,48 +55,48 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.jobTitle)
+                @Html.DisplayFor(modelItem => item.JobTitle)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.firstName)
+                @Html.DisplayFor(modelItem => item.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.lastName)
+                @Html.DisplayFor(modelItem => item.LastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.middleName)
+                @Html.DisplayFor(modelItem => item.MiddleName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.nickName)
+                @Html.DisplayFor(modelItem => item.NickName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.gender)
+                @Html.DisplayFor(modelItem => item.Gender)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.salutation)
+                @Html.DisplayFor(modelItem => item.Salutation)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.mobilePhone)
+                @Html.DisplayFor(modelItem => item.MobilePhone)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.officePhone)
+                @Html.DisplayFor(modelItem => item.OfficePhone)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.fax)
+                @Html.DisplayFor(modelItem => item.Fax)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.personalEmail)
+                @Html.DisplayFor(modelItem => item.PersonalEmail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.workEmail)
+                @Html.DisplayFor(modelItem => item.WorkEmail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.customer.customerId)
+                @Html.DisplayFor(modelItem => item.Customer.CustomerId)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.customerLineId"><i class="fa fa-pencil"></i></a> |
-                <a asp-action="Details" asp-route-id="@item.customerLineId"><i class="fa fa-list"></i></a> |
-                <a asp-action="Delete" asp-route-id="@item.customerLineId"><i class="fa fa-trash"></i></a>
+                <a asp-action="Edit" asp-route-id="@item.CustomerLineId"><i class="fa fa-pencil"></i></a> |
+                <a asp-action="Details" asp-route-id="@item.CustomerLineId"><i class="fa fa-list"></i></a> |
+                <a asp-action="Delete" asp-route-id="@item.CustomerLineId"><i class="fa fa-trash"></i></a>
             </td>
         </tr>
 }

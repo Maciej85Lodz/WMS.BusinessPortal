@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public TransferOutLine()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.TransferOutLineId = Guid.NewGuid().ToString();
         }
 

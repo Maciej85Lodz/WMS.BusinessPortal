@@ -11,7 +11,7 @@ namespace WMS.Models.Invent
     {
         public TransferIn()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.TransferInNumber = DateTime.UtcNow.Date.ToString("yyyyMMdd") + Guid.NewGuid().ToString().Substring(0, 5).ToUpper() + "#IN";
             this.TransferInDate = DateTime.UtcNow;
             this.TansferInId = Guid.NewGuid().ToString();

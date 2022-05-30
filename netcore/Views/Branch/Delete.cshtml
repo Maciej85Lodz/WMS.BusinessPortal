@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_AdminlteNetcoreDelete.cshtml";
     ViewData["EntityIcon"] = "fa fa-building-o";
     ViewData["DeleteInfo"] = "Branch that already have warehouses can not be deleted.";
-    WMS.Models.Invent.Warehouse wh = _context.Warehouse.Where(x => x.branchId.Equals(Model.branchId)).FirstOrDefault();
+    WMS.Models.Invent.Warehouse wh = _context.Warehouse.Where(x => x.branchId.Equals(Model.BranchId)).FirstOrDefault();
     ViewData["IsCanDeleted"] = false;
     if (wh == null)
     {
@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-md-12">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="branchId" />
+            <input type="hidden" asp-for="BranchId" />
             <div class="row">
                 <div class="col-md-12">
                     <small class="text-yellow"><i>Summary</i></small>
@@ -29,18 +29,18 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group has-success">
-                        <label asp-for="branchName" class="control-label"></label>
-                        <input asp-for="branchName" class="form-control" disabled />
-                        <span asp-validation-for="branchName" class="text-danger"></span>
+                        <label asp-for="BranchName" class="control-label"></label>
+                        <input asp-for="BranchName" class="form-control" disabled />
+                        <span asp-validation-for="BranchName" class="text-danger"></span>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label asp-for="description" class="control-label"></label>
-                        <textarea asp-for="description" class="form-control" cols="3" disabled></textarea>
-                        <span asp-validation-for="description" class="text-danger"></span>
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" cols="3" disabled></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -52,39 +52,39 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group has-success">
-                        <label asp-for="street1" class="control-label"></label>
-                        <input asp-for="street1" class="form-control" disabled />
-                        <span asp-validation-for="street1" class="text-danger"></span>
+                        <label asp-for="Street1" class="control-label"></label>
+                        <input asp-for="Street1" class="form-control" disabled />
+                        <span asp-validation-for="Street1" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="street2" class="control-label"></label>
-                        <input asp-for="street2" class="form-control" disabled />
-                        <span asp-validation-for="street2" class="text-danger"></span>
+                        <label asp-for="Street2" class="control-label"></label>
+                        <input asp-for="Street2" class="form-control" disabled />
+                        <span asp-validation-for="Street2" class="text-danger"></span>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="city" class="control-label"></label>
-                        <input asp-for="city" class="form-control" disabled />
-                        <span asp-validation-for="city" class="text-danger"></span>
+                        <label asp-for="City" class="control-label"></label>
+                        <input asp-for="City" class="form-control" disabled />
+                        <span asp-validation-for="City" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="province" class="control-label"></label>
-                        <input asp-for="province" class="form-control" disabled />
-                        <span asp-validation-for="province" class="text-danger"></span>
+                        <label asp-for="Province" class="control-label"></label>
+                        <input asp-for="Province" class="form-control" disabled />
+                        <span asp-validation-for="Province" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="country" class="control-label"></label>
-                        <input asp-for="country" class="form-control" disabled />
-                        <span asp-validation-for="country" class="text-danger"></span>
+                        <label asp-for="Country" class="control-label"></label>
+                        <input asp-for="Country" class="form-control" disabled />
+                        <span asp-validation-for="Country" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -96,9 +96,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="isDefaultBranch" class="control-label"></label>
+                        <label asp-for="IsDefaultBranch" class="control-label"></label>
                         <div class="checkbox">
-                            <input asp-for="isDefaultBranch" disabled /> &nbsp; Yes.
+                            <input asp-for="IsDefaultBranch" disabled /> &nbsp; Yes.
                         </div>
                     </div>
                 </div>

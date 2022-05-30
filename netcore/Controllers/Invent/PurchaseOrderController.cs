@@ -52,7 +52,7 @@ namespace WMS.Controllers.Invent
         // GET: PurchaseOrder
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.PurchaseOrder.OrderByDescending(x => x.createdAt).Include(p => p.Vendor);
+            var applicationDbContext = _context.PurchaseOrder.OrderByDescending(x => x.CreatedAt).Include(p => p.Vendor);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -74,8 +74,8 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", purchaseOrder.BranchId);
-            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", purchaseOrder.VendorId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", purchaseOrder.BranchId);
+            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "VendorName", purchaseOrder.VendorId);
 
             purchaseOrder.TotalOrderAmount = purchaseOrder.PurchaseOrderLine.Sum(x => x.TotalAmount);
             purchaseOrder.TotalDiscountAmount = purchaseOrder.PurchaseOrderLine.Sum(x => x.DiscountAmount);
@@ -90,9 +90,9 @@ namespace WMS.Controllers.Invent
         public IActionResult Create()
         {
             PurchaseOrder po = new PurchaseOrder();
-            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName");
-            Branch defaultBranch = _context.Branch.Where(x => x.isDefaultBranch.Equals(true)).FirstOrDefault();
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", defaultBranch != null ? defaultBranch.branchId : null);
+            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "VendorName");
+            Branch defaultBranch = _context.Branch.Where(x => x.IsDefaultBranch.Equals(true)).FirstOrDefault();
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", defaultBranch?.BranchId);
             return View(po);
         }
 
@@ -102,7 +102,7 @@ namespace WMS.Controllers.Invent
         // POST: PurchaseOrder/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PurchaseOrderId,PurchaseOrderNumber,Top,PurchaseOrderDate,DeliveryDate,DeliveryAddress,ReferenceNumberInternal,ReferenceNumberExternal,Description,VendorId,BranchId,PicInternal,picVendor,PurchaseOrderStatus,TotalDiscountAmount,TotalOrderAmount,PurchaseReceiveNumber,HasChild,createdAt")] PurchaseOrder purchaseOrder)
+        public async Task<IActionResult> Create([Bind("PurchaseOrderId,PurchaseOrderNumber,Top,PurchaseOrderDate,DeliveryDate,DeliveryAddress,ReferenceNumberInternal,ReferenceNumberExternal,Description,VendorId,BranchId,PicInternal,PicVendor,PurchaseOrderStatus,TotalDiscountAmount,TotalOrderAmount,PurchaseReceiveNumber,HasChild,createdAt")] PurchaseOrder purchaseOrder)
         {
             if (ModelState.IsValid)
             {
@@ -111,8 +111,8 @@ namespace WMS.Controllers.Invent
                 TempData["TransMessage"] = "Create PO " + purchaseOrder.PurchaseOrderNumber + " Success";
                 return RedirectToAction(nameof(Details), new { id = purchaseOrder.PurchaseOrderId });
             }
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", purchaseOrder.BranchId);
-            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", purchaseOrder.VendorId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", purchaseOrder.BranchId);
+            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "VendorName", purchaseOrder.VendorId);
             return View(purchaseOrder);
         }
 
@@ -144,7 +144,7 @@ namespace WMS.Controllers.Invent
         // POST: PurchaseOrder/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("PurchaseOrderId,PurchaseOrderNumber,Top,PurchaseOrderDate,DeliveryDate,DeliveryAddress,ReferenceNumberInternal,ReferenceNumberExternal,Description,VendorId,BranchId,PicInternal,picVendor,PurchaseOrderStatus,TotalDiscountAmount,TotalOrderAmount,PurchaseReceiveNumber,HasChild,createdAt")] PurchaseOrder purchaseOrder)
+        public async Task<IActionResult> Edit(string id, [Bind("PurchaseOrderId,PurchaseOrderNumber,Top,PurchaseOrderDate,DeliveryDate,DeliveryAddress,ReferenceNumberInternal,ReferenceNumberExternal,Description,VendorId,BranchId,PicInternal,PicVendor,PurchaseOrderStatus,TotalDiscountAmount,TotalOrderAmount,PurchaseReceiveNumber,HasChild,createdAt")] PurchaseOrder purchaseOrder)
         {
             if (id != purchaseOrder.PurchaseOrderId)
             {
@@ -207,8 +207,8 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", purchaseOrder.BranchId);
-            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", purchaseOrder.VendorId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", purchaseOrder.BranchId);
+            ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "VendorName", purchaseOrder.VendorId);
 
             purchaseOrder.TotalOrderAmount = purchaseOrder.PurchaseOrderLine.Sum(x => x.TotalAmount);
             purchaseOrder.TotalDiscountAmount = purchaseOrder.PurchaseOrderLine.Sum(x => x.DiscountAmount);

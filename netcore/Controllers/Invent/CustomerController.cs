@@ -27,7 +27,7 @@ namespace WMS.Controllers.Invent
         // GET: Customer
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customer.OrderByDescending(x => x.createdAt).ToListAsync());
+            return View(await _context.Customer.OrderByDescending(x => x.CreatedAt).ToListAsync());
         }
 
         // GET: Customer/Details/5
@@ -39,7 +39,7 @@ namespace WMS.Controllers.Invent
             }
 
             var customer = await _context.Customer
-                        .SingleOrDefaultAsync(m => m.customerId == id);
+                        .SingleOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
@@ -62,14 +62,14 @@ namespace WMS.Controllers.Invent
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerId,customerName,Description,size,street1,street2,city,province,country,HasChild,createdAt")] Customer customer)
+        public async Task<IActionResult> Create([Bind("CustomerId,CustomerName,Description,Size,Street1,Street2,City,Province,Country,HasChild,CreatedAt")] Customer customer)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Create Customer " + customer.customerName + " Success";
-                return RedirectToAction(nameof(Details), new { id = customer.customerId });
+                TempData["TransMessage"] = "Create Customer " + customer.CustomerName + " Success";
+                return RedirectToAction(nameof(Details), new { id = customer.CustomerId });
             }
             return View(customer);
         }
@@ -82,7 +82,7 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            var customer = await _context.Customer.SingleOrDefaultAsync(m => m.customerId == id);
+            var customer = await _context.Customer.SingleOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
@@ -95,7 +95,7 @@ namespace WMS.Controllers.Invent
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("CustomerId,customerName,Description,size,street1,street2,city,province,country,HasChild,createdAt")] Customer customer)
         {
-            if (id != customer.customerId)
+            if (id != customer.CustomerId)
             {
                 return NotFound();
             }
@@ -109,7 +109,7 @@ namespace WMS.Controllers.Invent
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customer.customerId))
+                    if (!CustomerExists(customer.CustomerId))
                     {
                         return NotFound();
                     }
@@ -118,7 +118,7 @@ namespace WMS.Controllers.Invent
                         throw;
                     }
                 }
-                TempData["TransMessage"] = "Edit Customer " + customer.customerName + " Success";
+                TempData["TransMessage"] = "Edit Customer " + customer.CustomerName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
@@ -133,7 +133,7 @@ namespace WMS.Controllers.Invent
             }
 
             var customer = await _context.Customer
-                    .SingleOrDefaultAsync(m => m.customerId == id);
+                    .SingleOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
@@ -151,14 +151,14 @@ namespace WMS.Controllers.Invent
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var customer = await _context.Customer
-                .Include(x => x.customerLine)
-                .SingleOrDefaultAsync(m => m.customerId == id);
+                .Include(x => x.CustomerLine)
+                .SingleOrDefaultAsync(m => m.CustomerId == id);
             try
             {
-                _context.CustomerLine.RemoveRange(customer.customerLine);
+                _context.CustomerLine.RemoveRange(customer.CustomerLine);
                 _context.Customer.Remove(customer);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Delete Customer " + customer.customerName + " Success";
+                TempData["TransMessage"] = "Delete Customer " + customer.CustomerName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -174,7 +174,7 @@ namespace WMS.Controllers.Invent
 
         private bool CustomerExists(string id)
         {
-            return _context.Customer.Any(e => e.customerId == id);
+            return _context.Customer.Any(e => e.CustomerId == id);
         }
 
     }

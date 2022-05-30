@@ -31,14 +31,14 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="Top" class="control-label">TOP</label>
-                    <select asp-for="Top" class="form-control select2" asp-items="Html.GetEnumSelectList<WMS.Models.Invent.TOP>()"></select>
+                    <select asp-for="Top" class="form-control select" asp-items="Html.GetEnumSelectList<WMS.Models.Invent.TOP>()"></select>
                     <span asp-validation-for="Top" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="CustomerId" class="control-label">Customer</label>
-                    <select asp-for="CustomerId" class="form-control select2" asp-items="ViewBag.customerId"></select>
+                    @*<select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>*@
                 </div>
             </div>
         </div>
@@ -99,8 +99,8 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="BranchId" class="control-label">Branch</label>
-                    <select asp-for="BranchId" class="form-control select2" asp-items="ViewBag.branchId"></select>
-                    <span asp-validation-for="BranchId" class="text-danger"></span>
+                    @*<select asp-for="BranchId" class="form-control" asp-items="ViewBag.BranchId"></select>*@
+                    @*<span asp-validation-for="BranchId" class="text-danger"></span>*@
                 </div>
             </div>
         </div>

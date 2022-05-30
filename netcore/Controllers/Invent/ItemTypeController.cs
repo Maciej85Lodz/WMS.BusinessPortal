@@ -27,7 +27,7 @@ namespace WMS.Controllers.Invent
         // GET: ItemType
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ItemTypes.OrderByDescending(x => x.createdAt).ToListAsync());
+            return View(await _context.ItemTypes.OrderByDescending(x => x.CreatedAt).ToListAsync());
         }
 
         // GET: ItemType/Details/5

@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public SalesOrder()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.SalesOrderNumber = DateTime.UtcNow.Date.ToString("yyyyMMdd") + Guid.NewGuid().ToString().Substring(0, 5).ToUpper() + "#SO";
             this.SalesOrderDate = DateTime.UtcNow.Date;
             this.DeliveryDate = this.SalesOrderDate.AddDays(5);

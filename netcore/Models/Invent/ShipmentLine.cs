@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public ShipmentLine()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.ShipmentLineId = Guid.NewGuid().ToString();
         }
 

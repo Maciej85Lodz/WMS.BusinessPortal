@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public ItemType()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.ItemTypeId = Guid.NewGuid().ToString();
         }
 

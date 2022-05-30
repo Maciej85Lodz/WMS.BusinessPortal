@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public TransferOrderLine()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.TransferOrderLineId = Guid.NewGuid().ToString();
         }
 

@@ -55,15 +55,17 @@ namespace WMS.Controllers.Invent
     public IActionResult Create(string masterid, string id)
     {
         var check = _context.VendorLine.SingleOrDefault(m => m.vendorLineId == id);
-        var selected = _context.Vendor.SingleOrDefault(m => m.vendorId == masterid);
+        var selected = _context.Vendor.SingleOrDefault(m => m.VendorId == masterid);
             ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "VendorId");
         if (check == null)
         {
-            VendorLine objline = new VendorLine();
-            objline.vendorLineId = string.Empty;
-            objline.vendor = selected;
-            objline.vendorId = masterid;
-            return View(objline);
+                VendorLine objline = new VendorLine
+                {
+                    vendorLineId = string.Empty,
+                    vendor = selected,
+                    vendorId = masterid
+                };
+                return View(objline);
         }
         else
         {

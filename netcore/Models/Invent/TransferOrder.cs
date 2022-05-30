@@ -10,7 +10,7 @@ namespace WMS.Models.Invent
     {
         public TransferOrder()
         {
-            this.createdAt = DateTime.UtcNow;
+            this.CreatedAt = DateTime.UtcNow;
             this.TransferOrderNumber = DateTime.UtcNow.Date.ToString("yyyyMMdd") + Guid.NewGuid().ToString().Substring(0, 5).ToUpper() + "#TO";
             this.TransferOrderDate = DateTime.UtcNow;
             this.TransferOrderStatus = TransferOrderStatus.Draft;

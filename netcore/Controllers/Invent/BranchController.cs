@@ -27,7 +27,7 @@ namespace WMS.Controllers.Invent
         // GET: Branch
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Branch.OrderByDescending(x => x.createdAt).ToListAsync());
+            return View(await _context.Branch.OrderByDescending(x => x.CreatedAt).ToListAsync());
         }
 
         // GET: Branch/Details/5
@@ -39,7 +39,7 @@ namespace WMS.Controllers.Invent
             }
 
             var branch = await _context.Branch
-                        .SingleOrDefaultAsync(m => m.branchId == id);
+                        .SingleOrDefaultAsync(m => m.BranchId == id);
             if (branch == null)
             {
                 return NotFound();
@@ -62,13 +62,13 @@ namespace WMS.Controllers.Invent
         // POST: Branch/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BranchId,branchName,Description,street1,street2,city,province,country,createdAt,isDefaultBranch")] Branch branch)
+        public async Task<IActionResult> Create([Bind("BranchId,BranchName,Description,Street1,Street2,City,Province,Country,CreatedAt,IsDefaultBranch")] Branch branch)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(branch);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Create Branch "+branch.branchName+" Success";
+                TempData["TransMessage"] = "Create Branch "+branch.BranchName+" Success";
                 return RedirectToAction(nameof(Index));
             }
             return View(branch);
@@ -82,7 +82,7 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            var branch = await _context.Branch.SingleOrDefaultAsync(m => m.branchId == id);
+            var branch = await _context.Branch.SingleOrDefaultAsync(m => m.BranchId == id);
             if (branch == null)
             {
                 return NotFound();
@@ -95,7 +95,7 @@ namespace WMS.Controllers.Invent
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("BranchId,branchName,Description,street1,street2,city,province,country,createdAt,isDefaultBranch")] Branch branch)
         {
-            if (id != branch.branchId)
+            if (id != branch.BranchId)
             {
                 return NotFound();
             }
@@ -107,19 +107,19 @@ namespace WMS.Controllers.Invent
                     _context.Update(branch);
                     await _context.SaveChangesAsync();
 
-                    if (branch.isDefaultBranch)
+                    if (branch.IsDefaultBranch)
                     {
-                        List<Branch> others = await _context.Branch.Where(x => !x.branchId.Equals(branch.branchId)).ToListAsync();
+                        List<Branch> others = await _context.Branch.Where(x => !x.BranchId.Equals(branch.BranchId)).ToListAsync();
                         foreach (var item in others)
                         {
-                            item.isDefaultBranch = false;
+                            item.IsDefaultBranch = false;
                             await _context.SaveChangesAsync();
                         }
                     }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BranchExists(branch.branchId))
+                    if (!BranchExists(branch.BranchId))
                     {
                         return NotFound();
                     }
@@ -128,7 +128,7 @@ namespace WMS.Controllers.Invent
                         throw;
                     }
                 }
-                TempData["TransMessage"] = "Edit Branch " + branch.branchName + " Success";
+                TempData["TransMessage"] = "Edit Branch " + branch.BranchName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             return View(branch);
@@ -143,7 +143,7 @@ namespace WMS.Controllers.Invent
             }
 
             var branch = await _context.Branch
-                    .SingleOrDefaultAsync(m => m.branchId == id);
+                    .SingleOrDefaultAsync(m => m.BranchId == id);
             if (branch == null)
             {
                 return NotFound();
@@ -160,12 +160,12 @@ namespace WMS.Controllers.Invent
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var branch = await _context.Branch.SingleOrDefaultAsync(m => m.branchId == id);
+            var branch = await _context.Branch.SingleOrDefaultAsync(m => m.BranchId == id);
             try
             {
                 _context.Branch.Remove(branch);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Delete Branch " + branch.branchName + " Success";
+                TempData["TransMessage"] = "Delete Branch " + branch.BranchName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -181,7 +181,7 @@ namespace WMS.Controllers.Invent
 
         private bool BranchExists(string id)
         {
-            return _context.Branch.Any(e => e.branchId == id);
+            return _context.Branch.Any(e => e.BranchId == id);
         }
 
     }

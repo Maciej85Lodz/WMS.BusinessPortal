@@ -52,7 +52,7 @@ namespace WMS.Controllers.Invent
         // GET: SalesOrder
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.SalesOrder.OrderByDescending(x => x.createdAt).Include(s => s.Customer);
+            var applicationDbContext = _context.SalesOrder.OrderByDescending(x => x.CreatedAt).Include(s => s.Customer);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -90,8 +90,8 @@ namespace WMS.Controllers.Invent
         public IActionResult Create()
         {
             ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "customerName");
-            Branch defaultBranch = _context.Branch.Where(x => x.isDefaultBranch.Equals(true)).FirstOrDefault();
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", defaultBranch != null ? defaultBranch.branchId : null);
+            Branch defaultBranch = _context.Branch.Where(x => x.IsDefaultBranch.Equals(true)).FirstOrDefault();
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", defaultBranch != null ? defaultBranch.BranchId : null);
             SalesOrder so = new SalesOrder();
             return View(so);
         }

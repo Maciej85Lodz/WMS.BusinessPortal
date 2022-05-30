@@ -46,13 +46,13 @@ namespace WMS.Controllers.Api
                 vendorLine.vendorLineId = Guid.NewGuid().ToString();
                 _context.VendorLine.Add(vendorLine);
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Add new contact "+vendorLine.firstName + " " + vendorLine.lastName +" success." });
+                return Json(new { success = true, message = "Add new contact "+vendorLine.FirstName + " " + vendorLine.LastName +" success." });
             }
             else
             {
                 _context.Update(vendorLine);
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Edit contact " + vendorLine.firstName + " " + vendorLine.lastName + " success." });
+                return Json(new { success = true, message = "Edit contact " + vendorLine.FirstName + " " + vendorLine.LastName + " success." });
             }
 
         }
@@ -76,7 +76,7 @@ namespace WMS.Controllers.Api
             _context.VendorLine.Remove(vendorLine);
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Delete contact " + vendorLine.firstName + " " + vendorLine.lastName + " success." });
+            return Json(new { success = true, message = "Delete contact " + vendorLine.FirstName + " " + vendorLine.LastName + " success." });
         }
 
 
