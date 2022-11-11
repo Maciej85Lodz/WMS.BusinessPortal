@@ -50,9 +50,9 @@ namespace WMS.Controllers.Api
 
             purchaseOrderLine.TotalAmount = (decimal)purchaseOrderLine.Quantity * purchaseOrderLine.ItemPrice;
 
-            if (purchaseOrderLine.purchaseOrderLineId == string.Empty)
+            if (purchaseOrderLine.PurchaseOrderLineId == string.Empty)
             {
-                purchaseOrderLine.purchaseOrderLineId = Guid.NewGuid().ToString();
+                purchaseOrderLine.PurchaseOrderLineId = Guid.NewGuid().ToString();
                 _context.PurchaseOrderLine.Add(purchaseOrderLine);
                 await _context.SaveChangesAsync();
                 return Json(new { success = true, message = "Add new order line success." });
@@ -78,7 +78,7 @@ namespace WMS.Controllers.Api
 
             var purchaseOrderLine = await _context.PurchaseOrderLine
                 .Include(x => x.PurchaseOrder)
-                .SingleOrDefaultAsync(m => m.purchaseOrderLineId == id);
+                .SingleOrDefaultAsync(m => m.PurchaseOrderLineId == id);
 
             if (purchaseOrderLine == null)
             {
@@ -99,7 +99,7 @@ namespace WMS.Controllers.Api
 
         private bool PurchaseOrderLineExists(string id)
         {
-            return _context.PurchaseOrderLine.Any(e => e.purchaseOrderLineId == id);
+            return _context.PurchaseOrderLine.Any(e => e.PurchaseOrderLineId == id);
         }
 
 

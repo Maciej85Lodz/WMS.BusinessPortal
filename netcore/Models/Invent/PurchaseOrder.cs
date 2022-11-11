@@ -30,7 +30,7 @@ namespace WMS.Models.Invent
         public string PurchaseOrderNumber { get; set; }
         
         [Display(Name = "Terms of Payment (TOP)")]
-        public TOP top { get; set; }
+        public TOP Top { get; set; }
 
         [Display(Name = "Purchase Order Date")]
         public DateTime PurchaseOrderDate { get; set; }

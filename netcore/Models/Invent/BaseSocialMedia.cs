@@ -10,14 +10,14 @@ namespace WMS.Models.Invent
     {
         [Display(Name = "Blog")]
         [StringLength(100)]
-        public string blog { get; set; }
+        public string Blog { get; set; }
 
         [Display(Name = "Website")]
         [StringLength(100)]
-        public string website { get; set; }
+        public string Website { get; set; }
 
         [Display(Name = "Linkedin")]
         [StringLength(100)]
-        public string linkedin { get; set; }
+        public string Linkedin { get; set; }
     }
 }

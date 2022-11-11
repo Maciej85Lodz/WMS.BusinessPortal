@@ -27,7 +27,7 @@ namespace WMS.Controllers.Invent
         // GET: Warehouse
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Warehouse.OrderByDescending(x => x.CreatedAt).Include(x => x.branch).ToListAsync());
+            return View(await _context.Warehouse.OrderByDescending(x => x.CreatedAt).Include(x => x.Branch).ToListAsync());
         }
 
         // GET: Warehouse/Details/5
@@ -39,13 +39,13 @@ namespace WMS.Controllers.Invent
             }
 
             var warehouse = await _context.Warehouse
-                        .Include(x => x.branch)
-                        .SingleOrDefaultAsync(m => m.warehouseId == id);
+                        .Include(x => x.Branch)
+                        .SingleOrDefaultAsync(m => m.WarehouseId == id);
             if (warehouse == null)
             {
                 return NotFound();
             }
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", warehouse.branchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", warehouse.BranchId);
             return View(warehouse);
         }
 
@@ -54,7 +54,7 @@ namespace WMS.Controllers.Invent
         public IActionResult Create()
         {
             Warehouse obj = new Warehouse();
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName");
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName");
             return View(obj);
         }
 
@@ -70,7 +70,7 @@ namespace WMS.Controllers.Invent
             {
                 _context.Add(warehouse);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Create Warehouse " + warehouse.warehouseName + " Success";
+                TempData["TransMessage"] = "Create Warehouse " + warehouse.WarehouseName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             return View(warehouse);
@@ -84,21 +84,21 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            var warehouse = await _context.Warehouse.Include(x => x.branch).SingleOrDefaultAsync(m => m.warehouseId == id);
+            var warehouse = await _context.Warehouse.Include(x => x.Branch).SingleOrDefaultAsync(m => m.WarehouseId == id);
             if (warehouse == null)
             {
                 return NotFound();
             }
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", warehouse.branchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", warehouse.BranchId);
             return View(warehouse);
         }
 
         // POST: Warehouse/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BranchId,WarehouseId,warehouseName,Description,street1,street2,city,province,country,createdAt")] Warehouse warehouse)
+        public async Task<IActionResult> Edit(string id, [Bind("BranchId,WarehouseId,WarehouseName,Description,street1,street2,city,province,country,createdAt")] Warehouse warehouse)
         {
-            if (id != warehouse.warehouseId)
+            if (id != warehouse.WarehouseId)
             {
                 return NotFound();
             }
@@ -112,7 +112,7 @@ namespace WMS.Controllers.Invent
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WarehouseExists(warehouse.warehouseId))
+                    if (!WarehouseExists(warehouse.WarehouseId))
                     {
                         return NotFound();
                     }
@@ -121,7 +121,7 @@ namespace WMS.Controllers.Invent
                         throw;
                     }
                 }
-                TempData["TransMessage"] = "Edit Warehouse " + warehouse.warehouseName + " Success";
+                TempData["TransMessage"] = "Edit Warehouse " + warehouse.WarehouseName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             return View(warehouse);
@@ -136,13 +136,13 @@ namespace WMS.Controllers.Invent
             }
 
             var warehouse = await _context.Warehouse
-                    .Include(x => x.branch)
-                    .SingleOrDefaultAsync(m => m.warehouseId == id);
+                    .Include(x => x.Branch)
+                    .SingleOrDefaultAsync(m => m.WarehouseId == id);
             if (warehouse == null)
             {
                 return NotFound();
             }
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", warehouse.branchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", warehouse.BranchId);
             return View(warehouse);
         }
 
@@ -154,12 +154,12 @@ namespace WMS.Controllers.Invent
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var warehouse = await _context.Warehouse.SingleOrDefaultAsync(m => m.warehouseId == id);
+            var warehouse = await _context.Warehouse.SingleOrDefaultAsync(m => m.WarehouseId == id);
             try
             {
                 _context.Warehouse.Remove(warehouse);
                 await _context.SaveChangesAsync();
-                TempData["TransMessage"] = "Delete Warehouse " + warehouse.warehouseName + " Success";
+                TempData["TransMessage"] = "Delete Warehouse " + warehouse.WarehouseName + " Success";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -173,7 +173,7 @@ namespace WMS.Controllers.Invent
 
         private bool WarehouseExists(string id)
         {
-            return _context.Warehouse.Any(e => e.warehouseId == id);
+            return _context.Warehouse.Any(e => e.WarehouseId == id);
         }
 
     }
