@@ -13,12 +13,12 @@ namespace WMS.Models.Invent
             this.CreatedAt = DateTime.UtcNow;
             this.DiscountAmount = 0m;
             this.TotalAmount = 0m;
-            this.purchaseOrderLineId = Guid.NewGuid().ToString();
+            this.PurchaseOrderLineId = Guid.NewGuid().ToString();
         }
 
         [StringLength(38)]
         [Display(Name = "Purchase Order Line Id")]
-        public string purchaseOrderLineId { get; set; }
+        public string PurchaseOrderLineId { get; set; }
 
         [StringLength(38)]
         [Display(Name = "Purchase Order Id")]

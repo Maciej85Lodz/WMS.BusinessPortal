@@ -42,7 +42,7 @@ namespace WMS.Controllers.Invent
         var purchaseOrderLine = await _context.PurchaseOrderLine
                 .Include(p => p.ItemType)
                 .Include(p => p.PurchaseOrder)
-                    .SingleOrDefaultAsync(m => m.purchaseOrderLineId == id);
+                    .SingleOrDefaultAsync(m => m.PurchaseOrderLineId == id);
         if (purchaseOrderLine == null)
         {
             return NotFound();
@@ -55,14 +55,14 @@ namespace WMS.Controllers.Invent
     // GET: PurchaseOrderLine/Create
     public IActionResult Create(string masterid, string id)
     {
-        var check = _context.PurchaseOrderLine.SingleOrDefault(m => m.purchaseOrderLineId == id);
+        var check = _context.PurchaseOrderLine.SingleOrDefault(m => m.PurchaseOrderLineId == id);
         var selected = _context.PurchaseOrder.SingleOrDefault(m => m.PurchaseOrderId == masterid);
             ViewData["ItemTypeId"] = new SelectList(_context.ItemTypes, "ItemTypeId", "ItemCode");
             ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrder, "PurchaseOrderId", "PurchaseOrderId");
         if (check == null)
         {
             PurchaseOrderLine objline = new PurchaseOrderLine();
-            objline.purchaseOrderLineId = string.Empty;
+            objline.PurchaseOrderLineId = string.Empty;
             objline.PurchaseOrder = selected;
             objline.PurchaseOrderId = masterid;
             return View(objline);
@@ -100,7 +100,7 @@ namespace WMS.Controllers.Invent
             return NotFound();
         }
 
-        var purchaseOrderLine = await _context.PurchaseOrderLine.SingleOrDefaultAsync(m => m.purchaseOrderLineId == id);
+        var purchaseOrderLine = await _context.PurchaseOrderLine.SingleOrDefaultAsync(m => m.PurchaseOrderLineId == id);
         if (purchaseOrderLine == null)
         {
             return NotFound();
@@ -115,7 +115,7 @@ namespace WMS.Controllers.Invent
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(string id, [Bind("purchaseOrderLineId,PurchaseOrderId,ItemTypeId,Quantity,ItemPrice,DiscountAmount,TotalAmount,createdAt")] PurchaseOrderLine purchaseOrderLine)
     {
-        if (id != purchaseOrderLine.purchaseOrderLineId)
+        if (id != purchaseOrderLine.PurchaseOrderLineId)
         {
             return NotFound();
         }
@@ -129,7 +129,7 @@ namespace WMS.Controllers.Invent
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PurchaseOrderLineExists(purchaseOrderLine.purchaseOrderLineId))
+                if (!PurchaseOrderLineExists(purchaseOrderLine.PurchaseOrderLineId))
                 {
                     return NotFound();
                 }
@@ -156,7 +156,7 @@ namespace WMS.Controllers.Invent
         var purchaseOrderLine = await _context.PurchaseOrderLine
                 .Include(p => p.ItemType)
                 .Include(p => p.PurchaseOrder)
-                .SingleOrDefaultAsync(m => m.purchaseOrderLineId == id);
+                .SingleOrDefaultAsync(m => m.PurchaseOrderLineId == id);
         if (purchaseOrderLine == null)
         {
             return NotFound();
@@ -173,7 +173,7 @@ namespace WMS.Controllers.Invent
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
-        var purchaseOrderLine = await _context.PurchaseOrderLine.SingleOrDefaultAsync(m => m.purchaseOrderLineId == id);
+        var purchaseOrderLine = await _context.PurchaseOrderLine.SingleOrDefaultAsync(m => m.PurchaseOrderLineId == id);
             _context.PurchaseOrderLine.Remove(purchaseOrderLine);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
@@ -181,7 +181,7 @@ namespace WMS.Controllers.Invent
 
     private bool PurchaseOrderLineExists(string id)
     {
-        return _context.PurchaseOrderLine.Any(e => e.purchaseOrderLineId == id);
+        return _context.PurchaseOrderLine.Any(e => e.PurchaseOrderLineId == id);
     }
 
   }

@@ -38,10 +38,10 @@ namespace WMS.Controllers.Invent
 
             if (so != null)
             {
-                warehouseList = _context.Warehouse.Where(x => x.branchId.Equals(so.Branch.BranchId)).ToList();
+                warehouseList = _context.Warehouse.Where(x => x.BranchId.Equals(so.Branch.BranchId)).ToList();
             }
             
-            warehouseList.Insert(0, new Warehouse { warehouseId = "0", warehouseName = "Select" });
+            warehouseList.Insert(0, new Warehouse { WarehouseId = "0", WarehouseName = "Select" });
 
             return Json(new SelectList(warehouseList, "WarehouseId", "warehouseName"));
         }
@@ -177,8 +177,8 @@ namespace WMS.Controllers.Invent
                     return RedirectToAction(nameof(Create));
                 }
 
-                shipment.Warehouse = await _context.Warehouse.Include(x => x.branch).SingleOrDefaultAsync(x => x.warehouseId.Equals(shipment.WarehouseId));
-                shipment.Branch = shipment.Warehouse.branch;
+                shipment.Warehouse = await _context.Warehouse.Include(x => x.Branch).SingleOrDefaultAsync(x => x.WarehouseId.Equals(shipment.WarehouseId));
+                shipment.Branch = shipment.Warehouse.Branch;
                 shipment.SalesOrder = await _context.SalesOrder.Include(x => x.Customer).SingleOrDefaultAsync(x => x.SalesOrderId.Equals(shipment.SalesOrderId));
                 shipment.Customer = shipment.SalesOrder.Customer;
 
@@ -194,11 +194,13 @@ namespace WMS.Controllers.Invent
                 solines = _context.SalesOrderLine.Include(x => x.ItemType).Where(x => x.SalesOrderId.Equals(shipment.SalesOrderId)).ToList();
                 foreach (var item in solines)
                 {
-                    ShipmentLine line = new ShipmentLine();
-                    line.Shipment = shipment;
-                    line.ItemType = item.ItemType;
-                    line.Qty = item.Qty;
-                    line.QtyShipment = item.Qty;
+                    ShipmentLine line = new ShipmentLine
+                    {
+                        Shipment = shipment,
+                        ItemType = item.ItemType,
+                        Qty = item.Qty,
+                        QtyShipment = item.Qty
+                    };
                     line.QtyInventory = line.QtyShipment * -1;
                     line.BranchId = shipment.BranchId;
                     line.WarehouseId = shipment.WarehouseId;

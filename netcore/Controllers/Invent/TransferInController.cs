@@ -77,9 +77,9 @@ namespace WMS.Controllers.Invent
             }
             ViewData["transferOrderId"] = new SelectList(_context.TransferOrder, "transferOrderId", "transferOrderNumber", transferIn.TransferOrderId);
             ViewData["branchIdFrom"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             ViewData["branchIdTo"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             return View(transferIn);
         }
 
@@ -89,9 +89,9 @@ namespace WMS.Controllers.Invent
         {
             ViewData["transferOrderId"] = new SelectList(_context.TransferOrder.Where(x => x.TransferOrderStatus == TransferOrderStatus.Open && x.IsIssued == true).ToList(), "transferOrderId", "transferOrderNumber");
             ViewData["branchIdFrom"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             ViewData["branchIdTo"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             TransferIn obj = new TransferIn();
             return View(obj);
         }
@@ -113,11 +113,11 @@ namespace WMS.Controllers.Invent
                 {
                     ViewData["StatusMessage"] = "Error. Transfer order already received. " + check.TransferInNumber;
 
-                    ViewData["transferOrderId"] = new SelectList(_context.TransferOrder, "transferOrderId", "transferOrderNumber");
-                    ViewData["branchIdFrom"] = new SelectList(_context.Branch, "BranchId", "branchName");
-                    ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
-                    ViewData["branchIdTo"] = new SelectList(_context.Branch, "BranchId", "branchName");
-                    ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+                    ViewData["transferOrderId"] = new SelectList(_context.TransferOrder, "TransferOrderId", "TransferOrderNumber");
+                    ViewData["branchIdFrom"] = new SelectList(_context.Branch, "BranchId", "BranchName");
+                    ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
+                    ViewData["branchIdTo"] = new SelectList(_context.Branch, "BranchId", "BranchName");
+                    ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
 
 
                     return View(transferIn);
@@ -127,10 +127,10 @@ namespace WMS.Controllers.Invent
                 transferIn.WarehouseIdFrom = to.WarehouseIdFrom;
                 transferIn.WarehouseIdTo = to.WarehouseIdTo;
 
-                transferIn.WarehouseFrom = await _context.Warehouse.Include(x => x.branch).SingleOrDefaultAsync(x => x.warehouseId.Equals(transferIn.WarehouseIdFrom));
-                transferIn.BranchFrom = transferIn.WarehouseFrom.branch;
-                transferIn.WarehouseTo = await _context.Warehouse.Include(x => x.branch).SingleOrDefaultAsync(x => x.warehouseId.Equals(transferIn.WarehouseIdTo));
-                transferIn.BranchTo = transferIn.WarehouseTo.branch;
+                transferIn.WarehouseFrom = await _context.Warehouse.Include(x => x.Branch).SingleOrDefaultAsync(x => x.WarehouseId.Equals(transferIn.WarehouseIdFrom));
+                transferIn.BranchFrom = transferIn.WarehouseFrom.Branch;
+                transferIn.WarehouseTo = await _context.Warehouse.Include(x => x.Branch).SingleOrDefaultAsync(x => x.WarehouseId.Equals(transferIn.WarehouseIdTo));
+                transferIn.BranchTo = transferIn.WarehouseTo.Branch;
 
 
                 to.IsReceived = true;
@@ -144,10 +144,12 @@ namespace WMS.Controllers.Invent
                 lines = _context.TransferOrderLine.Include(x => x.ItemType).Where(x => x.TransferOrderId.Equals(transferIn.TransferOrderId)).ToList();
                 foreach (var item in lines)
                 {
-                    TransferInLine line = new TransferInLine();
-                    line.TransferIn = transferIn;
-                    line.ItemType = item.ItemType;
-                    line.Qty = item.Qty;
+                    TransferInLine line = new TransferInLine
+                    {
+                        TransferIn = transferIn,
+                        ItemType = item.ItemType,
+                        Qty = item.Qty
+                    };
                     line.QtyInventory = line.Qty * 1;
 
                     _context.TransferInLine.Add(line);
@@ -181,9 +183,9 @@ namespace WMS.Controllers.Invent
             }
             ViewData["transferOrderId"] = new SelectList(_context.TransferOrder, "transferOrderId", "transferOrderNumber", transferIn.TransferOrderId);
             ViewData["branchIdFrom"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             ViewData["branchIdTo"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             return View(transferIn);
         }
 
@@ -220,9 +222,9 @@ namespace WMS.Controllers.Invent
             }
             ViewData["transferOrderId"] = new SelectList(_context.TransferOrder, "transferOrderId", "transferOrderNumber", transferIn.TransferOrderId);
             ViewData["branchIdFrom"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             ViewData["branchIdTo"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             return View(transferIn);
         }
 
@@ -247,9 +249,9 @@ namespace WMS.Controllers.Invent
             }
             ViewData["transferOrderId"] = new SelectList(_context.TransferOrder, "transferOrderId", "transferOrderNumber", transferIn.TransferOrderId);
             ViewData["branchIdFrom"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdFrom"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             ViewData["branchIdTo"] = new SelectList(_context.Branch, "BranchId", "branchName");
-            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
+            ViewData["warehouseIdTo"] = new SelectList(_context.Warehouse, "WarehouseId", "WarehouseName");
             return View(transferIn);
         }
 

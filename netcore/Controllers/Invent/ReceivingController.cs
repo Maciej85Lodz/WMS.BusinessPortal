@@ -34,10 +34,10 @@ namespace WMS.Controllers.Invent
 
             if (po != null)
             {
-                warehouseList = _context.Warehouse.Where(x => x.branchId.Equals(po.Branch.BranchId)).ToList();
+                warehouseList = _context.Warehouse.Where(x => x.BranchId.Equals(po.Branch.BranchId)).ToList();
             }
             
-            warehouseList.Insert(0, new Warehouse { warehouseId = "0", warehouseName = "Select" });
+            warehouseList.Insert(0, new Warehouse { WarehouseId = "0", WarehouseName = "Select" });
 
             return Json(new SelectList(warehouseList, "WarehouseId", "warehouseName"));
         }
@@ -90,7 +90,7 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", receiving.BranchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", receiving.BranchId);
             ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrder, "PurchaseOrderId", "PurchaseOrderNumber", receiving.PurchaseOrderId);
             ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", receiving.VendorId);
             ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName", receiving.WarehouseId);
@@ -103,7 +103,7 @@ namespace WMS.Controllers.Invent
         public IActionResult Create()
         {
             ViewData["StatusMessage"] = TempData["StatusMessage"];
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName");
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName");
             List<PurchaseOrder> poList = _context.PurchaseOrder.Where(x => x.PurchaseOrderStatus == PurchaseOrderStatus.Open).ToList();
             poList.Insert(0, new PurchaseOrder { PurchaseOrderId = "0", PurchaseOrderNumber = "Select" });
             ViewData["PurchaseOrderId"] = new SelectList(poList, "PurchaseOrderId", "PurchaseOrderNumber");
@@ -135,15 +135,15 @@ namespace WMS.Controllers.Invent
                 {
                     ViewData["StatusMessage"] = "Error. Purchase order already received. " + check.ReceivingNumber;
 
-                    ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName");
+                    ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName");
                     ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrder, "PurchaseOrderId", "PurchaseOrderNumber");
                     ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName");
                     ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName");
 
                     return View(receiving);
                 }
-                receiving.Warehouse = await _context.Warehouse.Include(x => x.branch).SingleOrDefaultAsync(x => x.warehouseId.Equals(receiving.WarehouseId));
-                receiving.Branch = receiving.Warehouse.branch;
+                receiving.Warehouse = await _context.Warehouse.Include(x => x.Branch).SingleOrDefaultAsync(x => x.WarehouseId.Equals(receiving.WarehouseId));
+                receiving.Branch = receiving.Warehouse.Branch;
                 receiving.PurchaseOrder = await _context.PurchaseOrder.Include(x => x.Vendor).SingleOrDefaultAsync(x => x.PurchaseOrderId.Equals(receiving.PurchaseOrderId));
                 receiving.Vendor = receiving.PurchaseOrder.Vendor;
 
@@ -160,11 +160,13 @@ namespace WMS.Controllers.Invent
                 polines = _context.PurchaseOrderLine.Include(x => x.ItemType).Where(x => x.PurchaseOrderId.Equals(receiving.PurchaseOrderId)).ToList();
                 foreach (var item in polines)
                 {
-                    ReceivingLine line = new ReceivingLine();
-                    line.Receiving = receiving;
-                    line.ItemType = item.ItemType;
-                    line.QtyOrder = item.Quantity;
-                    line.QtyReceive = item.Quantity;
+                    ReceivingLine line = new ReceivingLine
+                    {
+                        Receiving = receiving,
+                        ItemType = item.ItemType,
+                        QtyOrder = item.Quantity,
+                        QtyReceive = item.Quantity
+                    };
                     line.QtyInventory = line.QtyReceive * 1;
                     line.BranchId = receiving.BranchId;
                     line.WarehouseId = receiving.WarehouseId;
@@ -176,7 +178,7 @@ namespace WMS.Controllers.Invent
                 TempData["TransMessage"] = "Create GSRN " + receiving.ReceivingNumber + " Success";
                 return RedirectToAction(nameof(Details), new { id = receiving.ReceivingId });
             }
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", receiving.BranchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", receiving.BranchId);
             ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrder, "PurchaseOrderId", "PurchaseOrderNumber", receiving.PurchaseOrderId);
             ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", receiving.VendorId);
             ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName", receiving.WarehouseId);
@@ -196,7 +198,7 @@ namespace WMS.Controllers.Invent
             {
                 return NotFound();
             }
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", receiving.BranchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", receiving.BranchId);
             ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrder, "PurchaseOrderId", "PurchaseOrderNumber", receiving.PurchaseOrderId);
             ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", receiving.VendorId);
             ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName", receiving.WarehouseId);
@@ -234,7 +236,7 @@ namespace WMS.Controllers.Invent
                 TempData["TransMessage"] = "Edit GSRN " + receiving.ReceivingNumber + " Success";
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", receiving.BranchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", receiving.BranchId);
             ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrder, "PurchaseOrderId", "PurchaseOrderNumber", receiving.PurchaseOrderId);
             ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", receiving.VendorId);
             ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName", receiving.WarehouseId);
@@ -260,7 +262,7 @@ namespace WMS.Controllers.Invent
                 return NotFound();
             }
 
-            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "branchName", receiving.BranchId);
+            ViewData["BranchId"] = new SelectList(_context.Branch, "BranchId", "BranchName", receiving.BranchId);
             ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrder, "PurchaseOrderId", "PurchaseOrderNumber", receiving.PurchaseOrderId);
             ViewData["VendorId"] = new SelectList(_context.Vendor, "VendorId", "vendorName", receiving.VendorId);
             ViewData["WarehouseId"] = new SelectList(_context.Warehouse, "WarehouseId", "warehouseName", receiving.WarehouseId);

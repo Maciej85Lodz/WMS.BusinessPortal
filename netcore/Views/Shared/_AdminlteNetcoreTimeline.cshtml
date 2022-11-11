@@ -21,8 +21,8 @@
     if (currentController == "Warehouse")
     {
         Warehouse wh = new Warehouse();
-        wh = Context.Warehouse.Where(x => x.warehouseId.Equals(whId)).FirstOrDefault();
-        branchId = wh != null ? wh.branchId : "";
+        wh = Context.Warehouse.Where(x => x.WarehouseId.Equals(whId)).FirstOrDefault();
+        branchId = wh != null ? wh.BranchId : "";
 
         times = netcoreSvc.GetTimelinesByBranchId(branchId);
     }

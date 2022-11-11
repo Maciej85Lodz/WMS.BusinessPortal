@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_AdminlteNetcoreDelete.cshtml";
     ViewData["EntityIcon"] = "fa fa-building-o";
     ViewData["DeleteInfo"] = "Branch that already have warehouses can not be deleted.";
-    WMS.Models.Invent.Warehouse wh = _context.Warehouse.Where(x => x.branchId.Equals(Model.BranchId)).FirstOrDefault();
+    WMS.Models.Invent.Warehouse wh = _context.Warehouse.Where(x => x.BranchId.Equals(Model.BranchId)).FirstOrDefault();
     ViewData["IsCanDeleted"] = false;
     if (wh == null)
     {

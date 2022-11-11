@@ -209,25 +209,25 @@ namespace WMS.Services
             }
         }
 
-        public VMStock GetStockByItemTypeAndWarehouse(string ItemTypeId, string warehouseId)
+        public VMStock GetStockByItemTypeAndWarehouse(string ItemTypeId, string WarehouseId)
         {
             VMStock result = new VMStock();
 
             try
             {
                 ItemType itemType = _context.ItemTypes.FirstOrDefault(x => x.ItemTypeId.Equals(ItemTypeId));
-                Warehouse warehouse = _context.Warehouse.FirstOrDefault(x => x.warehouseId.Equals(warehouseId));
+                Warehouse warehouse = _context.Warehouse.FirstOrDefault(x => x.WarehouseId.Equals(WarehouseId));
 
                 if (itemType != null && warehouse != null)
                 {
                     VMStock stock = new VMStock
                     {
                         ItemType = itemType.ItemCode,
-                        Warehouse = warehouse.warehouseName,
-                        QtyReceiving = _context.ReceivingLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyReceive),
-                        QtyShipment = _context.ShipmentLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.warehouseId)).Sum(x => x.QtyShipment),
-                        QtyTransferIn = _context.TransferInLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferIn.WarehouseIdTo.Equals(warehouse.warehouseId)).Sum(x => x.Qty),
-                        QtyTransferOut = _context.TransferOutLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferOut.WarehouseIdFrom.Equals(warehouse.warehouseId)).Sum(x => x.Qty)
+                        Warehouse = warehouse.WarehouseName,
+                        QtyReceiving = _context.ReceivingLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.WarehouseId)).Sum(x => x.QtyReceive),
+                        QtyShipment = _context.ShipmentLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.WarehouseId.Equals(warehouse.WarehouseId)).Sum(x => x.QtyShipment),
+                        QtyTransferIn = _context.TransferInLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferIn.WarehouseIdTo.Equals(warehouse.WarehouseId)).Sum(x => x.Qty),
+                        QtyTransferOut = _context.TransferOutLine.Where(x => x.ItemTypeId.Equals(itemType.ItemTypeId) && x.TransferOut.WarehouseIdFrom.Equals(warehouse.WarehouseId)).Sum(x => x.Qty)
                     };
                     stock.QtyOnhand = stock.QtyReceiving + stock.QtyTransferIn - stock.QtyShipment - stock.QtyTransferOut;
 
@@ -261,7 +261,7 @@ namespace WMS.Services
                 {
                     foreach (var wh in warehouses)
                     {
-                        VMStock stock = stock = GetStockByItemTypeAndWarehouse(item.ItemTypeId, wh.warehouseId);
+                        VMStock stock = stock = GetStockByItemTypeAndWarehouse(item.ItemTypeId, wh.WarehouseId);
                         
                         if (stock != null) stocks.Add(stock);
 
@@ -312,15 +312,15 @@ namespace WMS.Services
             return results;
         }
 
-        public List<TimelineViewModel> GetTimelinesByBranchId(string branchId)
+        public List<TimelineViewModel> GetTimelinesByBranchId(string BranchId)
         {
             List<TimelineViewModel> results = new List<TimelineViewModel>();
 
             try
             {
                 List<TimelineViewModel> times = new List<TimelineViewModel>();
-                List<PurchaseOrder> polist = _context.PurchaseOrder.Where(x => x.BranchId.Equals(branchId)).OrderByDescending(x => x.PurchaseOrderDate).Take(3).ToList();
-                List<SalesOrder> solist = _context.SalesOrder.Where(x => x.BranchId.Equals(branchId)).OrderByDescending(x => x.SalesOrderDate).Take(3).ToList();
+                List<PurchaseOrder> polist = _context.PurchaseOrder.Where(x => x.BranchId.Equals(BranchId)).OrderByDescending(x => x.PurchaseOrderDate).Take(3).ToList();
+                List<SalesOrder> solist = _context.SalesOrder.Where(x => x.BranchId.Equals(BranchId)).OrderByDescending(x => x.SalesOrderDate).Take(3).ToList();
 
                 foreach (var item in polist)
                 {
@@ -481,15 +481,15 @@ namespace WMS.Services
             {
               
 
-                Branch branch = new Branch() { BranchName = "HQ", IsDefaultBranch = true, Street1 = "Rua Orós, 92" };
-                _context.Branch.Add(branch);
+                Branch Branch = new Branch() { BranchName = "HQ", IsDefaultBranch = true, Street1 = "Rua Orós, 92" };
+                _context.Branch.Add(Branch);
 
                 List<Warehouse> whs = new List<Warehouse>() {
-                    new Warehouse{warehouseName = "WH1", branch = branch, Street1 = "Rua Orós, 92"},
-                    new Warehouse{warehouseName = "WH2", branch = branch, Street1 = "C/ Moralzarzal, 86"},
-                    new Warehouse{warehouseName = "WH3", branch = branch, Street1 = "184, chaussée de Tournai"},
-                    new Warehouse{warehouseName = "WH4", branch = branch, Street1 = "Åkergatan 24"},
-                    new Warehouse{warehouseName = "WH5", branch = branch, Street1 = "Berliner Platz 43"}
+                    new Warehouse{WarehouseName = "WH1", Branch = Branch, Street1 = "Rua Orós, 92"},
+                    new Warehouse{WarehouseName = "WH2", Branch = Branch, Street1 = "C/ Moralzarzal, 86"},
+                    new Warehouse{WarehouseName = "WH3", Branch = Branch, Street1 = "184, chaussée de Tournai"},
+                    new Warehouse{WarehouseName = "WH4", Branch = Branch, Street1 = "Åkergatan 24"},
+                    new Warehouse{WarehouseName = "WH5", Branch = Branch, Street1 = "Berliner Platz 43"}
                 };
 
                 _context.Warehouse.AddRange(whs);
